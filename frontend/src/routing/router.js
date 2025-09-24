@@ -12,7 +12,8 @@ const routes = [
     children: [
       { path: '', name: 'Dashboard', component: Dashboard },
       { path: 'planner', name: 'Planner', component: Planner },
-      { path: 'schedule', name: 'Schedule', component: Schedule }
+      { path: 'schedule', name: 'Schedule', component: Schedule },
+      { path: 'account', name: 'Account', component: () => import('../views/account.vue') } // Lazy-loaded
     ]
   }
 ];
