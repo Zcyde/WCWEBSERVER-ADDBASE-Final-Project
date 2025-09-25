@@ -9,6 +9,13 @@
       </div>
 
       <nav class="flex flex-col space-y-4 w-full">
+        <router-link
+          to="/account"
+          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
+        >
+          <span class="text-xl">👤</span>
+          <span class="hidden md:block">Account</span>
+        </router-link>
         <router-link to="/" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md">
           <span class="text-xl">🔲</span>
           <span class="hidden md:block">Dashboard</span>
