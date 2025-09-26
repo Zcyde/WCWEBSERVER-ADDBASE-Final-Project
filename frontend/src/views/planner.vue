@@ -31,7 +31,7 @@
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none opacity-10"
     >
-      <img src="../dmLogo.png" alt="watermark" class="w-96" />
+      <img src="../test.png" alt="watermark" class="w-96" />
     </div>
 
     <PlanInputModal
