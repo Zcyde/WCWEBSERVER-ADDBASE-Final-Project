@@ -7,6 +7,7 @@ import Planner from '../views/planner.vue';
 import Schedule from '../views/schedule.vue';
 import Login from '../views/login.vue';
 import SignIn from '../views/signIn.vue';
+import Portfolio from '../views/portfolio.vue';
 
 const routes = [
   // This is the parent route for the main application layout
@@ -30,7 +31,8 @@ const routes = [
       { path: '', name: 'Dashboard', component: Dashboard },
       { path: 'planner', name: 'Planner', component: Planner },
       { path: 'schedule', name: 'Schedule', component: Schedule },
-      { path: 'account', name: 'Account', component: () => import('../views/account.vue') } // Lazy-loaded
+      { path: 'account', name: 'Account', component: () => import('../views/account.vue') }, // Lazy-loaded
+      { path: 'portfolio', name: 'Portfolio', component: Portfolio }
     ]
   }
 ];
