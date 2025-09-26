@@ -46,7 +46,7 @@
                 <!-- Create an account (left) -->
                 <p class="text-gray-600">
                     Create an account?
-                    <a href="#" class="font-semibold text-blue-600 hover:underline">Sign up</a>
+                    <a href="/sign-in" class="font-semibold text-blue-600 hover:underline">Sign up</a>
                 </p>
                 <!-- Forgot password (right) -->
                 <a href="#" class="text-blue-600 font-semibold hover:underline">
