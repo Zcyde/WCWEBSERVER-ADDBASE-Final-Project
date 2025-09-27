@@ -1,52 +1,45 @@
-// src/eventStore.js
 import { reactive } from 'vue';
+import api from './services/api.js';
 
-// --- Date Helpers (for mock data) ---
-const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonthPadded = String(now.getMonth() + 1).padStart(2, '0');
-const date = (day) => `${currentYear}-${currentMonthPadded}-${String(day).padStart(2, '0')}`;
-
-// --- ID Tracking ---
-let nextId = 9; 
-let nextFolderId = 105; 
-
-/**
- * The main reactive store for all events and metadata.
- */
 export const store = reactive({
-    // Initial mock events (adjusted to current month/year for testing)
-    events: [
-    ],
-    
-    // Default folders
-    folders: [
-    ],
+    events: [],
+    folders: [],
+    async loadData() {
+        try {
+            const [eventsRes, foldersRes] = await Promise.all([
+                api.get('/events'),
+                api.get('/folders')
+            ]);
+            this.events = eventsRes.data;
+            this.folders = foldersRes.data;
+        } catch (error) {
+            console.error('Failed to load data:', error);
+        }
+    },
 
     /**
      * Action to add a new event (plan) to the store.
      */
-    addEvent(eventData) {
-        const newEvent = {
-            id: nextId++,
-            ...eventData,
-            color: eventData.color || 'bg-indigo-500'
-        };
-        this.events.push(newEvent);
-        // Ensure events are sorted by date
-        this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    async addEvent(eventData) {
+        try {
+            const response = await api.post('/events', eventData);
+            this.events.push(response.data);
+            this.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } catch (error) {
+            console.error('Failed to add event:', error);
+        }
     },
 
     /**
      * Action to add a new folder to the store.
      */
-    addFolder(name, color = 'bg-gray-400') {
+    async addFolder(name, color = 'bg-gray-400') {
         if (!name) return;
-        const newFolder = {
-            id: nextFolderId++,
-            name: name,
-            color: color
-        };
-        this.folders.push(newFolder);
+        try {
+            const response = await api.post('/folders', { name, color });
+            this.folders.push(response.data);
+        } catch (error) {
+            console.error('Failed to add folder:', error);
+        }
     }
 });
