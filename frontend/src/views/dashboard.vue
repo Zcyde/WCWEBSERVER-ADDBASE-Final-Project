@@ -2,7 +2,7 @@
   <div class="flex-1 p-6 relative">
     <!-- Header with "Dashboard" and curved border -->
     <div class="relative z-10 p-4 mb-8 bg-gray-300 rounded-full border-2 border-black shadow-md">
-      <h1 class="text-xl font-bold text-center">Dashboard</h1>
+      <h1 class="text-2xl font-bold text-center">Dashboard</h1>
     </div>
 
     <!-- Main content container -->
@@ -24,18 +24,18 @@
           </svg>
         </div>
         <div>
-          <h2 class="text-xl font-semibold">{{ firstName }},</h2>
-          <h2 class="text-xl font-semibold">{{ lastName }}</h2>
+          <h2 class="text-2xl font-semibold">{{ firstName }},</h2>
+          <h2 class="text-2xl font-semibold">{{ lastName }}</h2>
         </div>
       </div>
 
       <!-- Planners section -->
       <div class="flex-1 bg-white p-4 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold mb-4">Planners</h2>
+        <h2 class="text-xl font-semibold mb-4">Planners</h2>
         <div class="flex space-x-4">
           <div class="flex flex-col items-center">
             <div class="w-20 h-16 bg-blue-400 rounded-md shadow-md"></div>
-            <span class="mt-2 text-sm">Week #</span>
+            <span class="mt-2 text-base">Week #</span>
           </div>
         </div>
       </div>
@@ -43,22 +43,22 @@
 
     <!-- Calendar grid -->
     <div class="mt-0 bg-white p-4 rounded-lg shadow-md">
-      <div class="grid grid-cols-8 text-center font-bold text-sm border border-gray-300 rounded-md overflow-hidden">
+      <div class="grid grid-cols-8 text-center font-bold text-base border border-gray-300 rounded-md overflow-hidden">
         <!-- Empty top-left cell -->
         <div class="bg-white py-3 border-r"></div>
 
         <!-- Weekday headers -->
-        <div class="bg-gray-200 py-3 border-r">Sunday</div>
-        <div class="bg-gray-200 py-3 border-r">Monday</div>
-        <div class="bg-gray-200 py-3 border-r">Tuesday</div>
-        <div class="bg-gray-200 py-3 border-r">Wednesday</div>
-        <div class="bg-gray-200 py-3 border-r">Thursday</div>
-        <div class="bg-gray-200 py-3 border-r">Friday</div>
-        <div class="bg-gray-200 py-3">Saturday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Sunday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Monday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Tuesday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Wednesday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Thursday</div>
+        <div class="bg-gray-200 py-3 border-r text-base">Friday</div>
+        <div class="bg-gray-200 py-3 text-base">Saturday</div>
 
         <!-- Time rows -->
         <template v-for="hour in 7" :key="hour">
-          <div class="bg-white text-sm font-normal py-4 border-r border-t">
+          <div class="bg-white text-base font-normal py-4 border-r border-t">
             {{ hour + 5 }} am
           </div>
           <div
@@ -78,8 +78,7 @@ import { ref } from "vue";
 const firstName = ref("Marlon");
 const lastName = ref("Garcia Michael");
 
-// You would add a function here to fetch the data.
-// For example:
+// Example of fetching data (not active yet)
 // import axios from 'axios';
 // async function fetchUserData() {
 //   try {
@@ -91,6 +90,4 @@ const lastName = ref("Garcia Michael");
 //   }
 // }
 // fetchUserData();
-
-// You can add similar functions to fetch planner and schedule data.
 </script>
