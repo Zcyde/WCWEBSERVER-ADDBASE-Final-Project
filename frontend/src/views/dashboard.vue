@@ -8,7 +8,7 @@
     <!-- Main content container -->
     <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
       <!-- Profile section -->
-      <div class="flex-1 bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+      <div class="flex-1 bg-white p-4 rounded-lg shadow-md flex items-center space-x-4">
         <div
           class="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center bg-gray-200"
         >
@@ -18,13 +18,11 @@
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <!-- Placeholder for profile picture (File handling or backend upload can be done) -->
             <path
               d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
             />
           </svg>
         </div>
-        <!-- This is a placeholder for the user's full name from the backend -->
         <div>
           <h2 class="text-xl font-semibold">{{ firstName }},</h2>
           <h2 class="text-xl font-semibold">{{ lastName }}</h2>
@@ -32,56 +30,51 @@
       </div>
 
       <!-- Planners section -->
-      <div class="flex-1 bg-white p-6 rounded-lg shadow-md">
+      <div class="flex-1 bg-white p-4 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold mb-4">Planners</h2>
         <div class="flex space-x-4">
-          <!-- Placeholder for planner folders from the BACKEND CONNECTION -->
           <div class="flex flex-col items-center">
             <div class="w-20 h-16 bg-blue-400 rounded-md shadow-md"></div>
             <span class="mt-2 text-sm">Week #</span>
-            <!-- Reflect based on the backend -->
           </div>
         </div>
       </div>
     </div>
 
     <!-- Calendar grid -->
-    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
-      <div
-        class="grid grid-cols-8 gap-1 text-center font-bold text-sm border border-gray-300 rounded-md overflow-hidden"
-      >
-        <!-- Time and weekday headers -->
-        <!-- Insert info here based from backend -->
-        <div class="col-span-1 bg-white text-gray-800 py-4"></div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Sunday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Monday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Tuesday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Wednesday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Thursday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2 border-r">Friday</div>
-        <div class="col-span-1 bg-gray-200 py-4 px-2">Saturday</div>
+    <div class="mt-0 bg-white p-4 rounded-lg shadow-md">
+      <div class="grid grid-cols-8 text-center font-bold text-sm border border-gray-300 rounded-md overflow-hidden">
+        <!-- Empty top-left cell -->
+        <div class="bg-white py-3 border-r"></div>
 
-        <!-- Time rows and grid cells -->
-        <!-- These will be dynamically populated based on the selected planner from the backend -->
+        <!-- Weekday headers -->
+        <div class="bg-gray-200 py-3 border-r">Sunday</div>
+        <div class="bg-gray-200 py-3 border-r">Monday</div>
+        <div class="bg-gray-200 py-3 border-r">Tuesday</div>
+        <div class="bg-gray-200 py-3 border-r">Wednesday</div>
+        <div class="bg-gray-200 py-3 border-r">Thursday</div>
+        <div class="bg-gray-200 py-3 border-r">Friday</div>
+        <div class="bg-gray-200 py-3">Saturday</div>
+
+        <!-- Time rows -->
         <template v-for="hour in 7" :key="hour">
+          <div class="bg-white text-sm font-normal py-4 border-r border-t">
+            {{ hour + 5 }} am
+          </div>
           <div
-            class="col-span-1 bg-white text-sm font-normal py-4 border-r border-b"
-          >{{ hour + 5 }} am</div>
-          <div v-for="day in 7" :key="day" class="col-span-1 h-16 border-r border-b"></div>
+            v-for="day in 7"
+            :key="day"
+            class="h-16 border-r border-t"
+          ></div>
         </template>
       </div>
     </div>
   </div>
 </template>
 
-
-<!-- DI KO GETS TO BAHALA NA KAYO -->
 <script setup>
-// This is where you would handle the backend connection.
-// You can use a library like axios to fetch data.
 import { ref } from "vue";
 
-// Placeholders for data that will come from the backend.
 const firstName = ref("Marlon");
 const lastName = ref("Garcia Michael");
 
