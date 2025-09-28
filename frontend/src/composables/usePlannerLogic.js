@@ -1,5 +1,5 @@
-import { ref, reactive } from 'vue';
-import { store } from '../eventStore.js'; // Access to your global data store
+import { ref, reactive, computed } from 'vue';
+import { store } from '../eventStore.js'; // Your global store
 
 /**
  * usePlannerLogic Composable
@@ -7,59 +7,116 @@ import { store } from '../eventStore.js'; // Access to your global data store
  */
 export function usePlannerLogic() {
   // --- STATE ---
-  // Tracks the currently selected folder object for detail view.
-  const selectedFolder = ref(null);
+  const selectedFolder = ref(null); // Tracks the currently selected folder
+  const showAddFolderModal = ref(false); // Controls folder modal visibility
+  const showAddEventModal = ref(false);  // Controls event modal visibility
 
-  // Controls the visibility of the Add Folder modal.
-  const showAddFolderModal = ref(false);
-
-  // Reactive object to capture new folder input data.
+  // Folder form state
   const newFolder = reactive({
     name: "",
     color: "bg-gray-400",
   });
 
+  // Event form state
+  const newEvent = reactive({
+    title: "",
+    date: "",
+    folderId: null,
+  });
+
+  // Reactive array for events
+  const events = ref([]); // Local copy of store events
+
   // --- METHODS ---
 
   /**
-   * Sets the selected folder and transitions the view to the detail mode.
-   * @param {Object} folder - The folder object clicked by the user.
+   * Sets the selected folder and transitions the view to the folder detail mode.
    */
   const handleFolderSelect = (folder) => {
     selectedFolder.value = folder;
+    // Filter events for this folder
+    events.value = store.events.filter(e => e.folderId === folder.id);
   };
 
   /**
-   * Clears the selected folder and returns the view to the list mode.
+   * Clears the selected folder and returns to the folder list view.
    */
   const backToList = () => {
     selectedFolder.value = null;
+    events.value = [];
   };
 
   /**
-   * Calls the store action to create a new folder and handles modal state.
+   * Creates a new folder and updates store/reactive state.
    */
   const createFolder = async () => {
     if (!newFolder.name.trim()) return;
 
-    // Use the store's async action to persist the new folder
-    await store.addFolder(newFolder.name.trim(), newFolder.color);
-
-    // Reset local state and close the modal
-    newFolder.name = "";
-    newFolder.color = "bg-gray-400";
-    showAddFolderModal.value = false;
+    try {
+      await store.addFolder(newFolder.name.trim(), newFolder.color);
+      newFolder.name = "";
+      newFolder.color = "bg-gray-400";
+      showAddFolderModal.value = false;
+    } catch (error) {
+      console.error("Failed to create folder:", error);
+    }
   };
 
+  /**
+   * Creates a new event and updates store/reactive state.
+   */
+  const createEvent = async () => {
+    if (!newEvent.title.trim() || !newEvent.date) return;
+    if (!selectedFolder.value) {
+      console.warn("Select a folder first!");
+      return;
+    }
+
+    try {
+      newEvent.folderId = selectedFolder.value.id;
+      await store.addEvent(newEvent.title.trim(), newEvent.date, newEvent.folderId);
+
+      // Update local events
+      events.value.push({ 
+        id: store.events[store.events.length - 1].id, 
+        title: newEvent.title, 
+        date: newEvent.date, 
+        folderId: newEvent.folderId 
+      });
+
+      // Reset form + close modal
+      newEvent.title = "";
+      newEvent.date = "";
+      newEvent.folderId = null;
+      showAddEventModal.value = false;
+
+    } catch (error) {
+      console.error("Failed to create event:", error);
+    }
+  };
+
+  /**
+   * Computed to get events for the selected folder
+   */
+  const folderEvents = computed(() => {
+    if (!selectedFolder.value) return [];
+    return events.value.filter(e => e.folderId === selectedFolder.value.id);
+  });
+
   return {
-    // State to be exposed to the template
+    // State exposed to template
     selectedFolder,
     showAddFolderModal,
+    showAddEventModal,
     newFolder,
+    newEvent,
+    events,
+    folderEvents,
 
-    // Methods to be exposed to the template
+    // Methods exposed to template
     handleFolderSelect,
     backToList,
     createFolder,
+    createEvent,
   };
 }

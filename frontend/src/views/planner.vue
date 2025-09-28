@@ -1,23 +1,30 @@
 <template>
   <div class="relative min-h-screen p-4 sm:p-8">
-    <div
-      class="flex justify-end items-center pt-8 pb-4 relative pr-4 border-b border-black-300 mb-4"
-    >
-      <!-- Planner Header -->
-      <div
-        class="absolute left-1/2 top-0 transform -translate-x-1/2 py-3 px-10 rounded-full border-2 border-black font-sans text-2xl font-bold text-gray-800 bg-gradient-to-b from-gray-200 to-gray-300 shadow-xl"
-      >Planner</div>
+    <!-- Header -->
+    <div class="relative mb-6 border-b border-gray-300 pb-3 flex items-center justify-center">
+      <!-- Title -->
+      <h1
+        class="py-2 px-6 rounded-full border-2 border-black 
+               text-xl sm:text-2xl font-bold text-gray-800 
+               bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
+      >
+        Planner
+      </h1>
 
-      <!-- Button for creating a NEW FOLDER (only visible on list view) -->
+      <!-- Add Planner Button -->
       <button
         v-if="!selectedFolder"
         @click="showAddFolderModal = true"
-        class="py-2 px-4 rounded-full text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-md text-white hover:shadow-lg hover:from-blue-500 transition-all z-10"
+        class="absolute right-0 top-1/2 -translate-y-1/2 
+               py-1 px-3 sm:py-1.5 sm:px-4 rounded-full 
+               text-sm sm:text-base font-medium 
+               bg-gradient-to-b from-blue-400 to-blue-600 
+               border border-blue-700 shadow-md text-white 
+               hover:shadow-lg hover:from-blue-500 transition-all"
       >
-        <!-- Plus Icon -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 inline mr-1"
+          class="h-4 w-4 inline mr-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -25,7 +32,7 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg>
-        Add Planner
+        Add
       </button>
     </div>
 
@@ -99,14 +106,11 @@
 <script setup>
 import { onMounted } from "vue";
 import { store } from "../eventStore.js"; // MUST match your store file name
-// UPDATED to use the new composable name
 import { usePlannerLogic } from "../composables/usePlannerLogic.js";
 
-// Import Components (ensure these files exist in src/components/)
 import FolderList from "../components/FolderList.vue";
 import FolderDetail from "../components/FolderDetail.vue";
 
-// Use the Composable to get state and methods
 const {
   selectedFolder,
   showAddFolderModal,
@@ -114,11 +118,9 @@ const {
   handleFolderSelect,
   backToList,
   createFolder,
-} = usePlannerLogic(); // UPDATED to use the new function name
+} = usePlannerLogic();
 
-// MANDATORY: Lifecycle hook to ensure data is loaded
 onMounted(() => {
-  // Only load data if the store is currently empty to prevent unnecessary API calls
   if (store.folders.length === 0) {
     store.loadData();
   }

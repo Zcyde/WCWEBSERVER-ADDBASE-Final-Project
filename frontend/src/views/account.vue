@@ -9,15 +9,18 @@
       </h1>
     </div>
 
-    <!-- Profile & Info Section -->
-    <div class="flex flex-col lg:flex-row gap-10 w-full max-w-5xl">
-      <!-- Profile Card (Dark Blue) -->
+    <!-- Responsive Layout -->
+    <div class="w-full max-w-5xl flex flex-col lg:flex-row gap-6">
+      <!-- Profile Section (desktop only) -->
       <div
-        class="flex-1 bg-[#1E293B] shadow-lg rounded-2xl p-8 flex flex-col items-center justify-center text-white relative"
+        class="hidden lg:flex flex-1 flex-col items-center justify-center relative 
+               text-white bg-[#1E293B] rounded-2xl p-6 shadow-md"
       >
         <div class="relative w-32 h-32">
           <!-- Profile Picture -->
-          <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white">
+          <div
+            class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white"
+          >
             <img
               :src="profileImage"
               alt="User Photo"
@@ -41,105 +44,134 @@
           />
         </div>
 
-        <h2 class="mt-4 text-xl font-semibold">
-          First Name and Last Name
-        </h2>
-        <p class="text-gray-200 text-sm">user@email.com</p>
+        <h2 class="mt-4 text-xl font-semibold">First Name and Last Name</h2>
+        <p class="text-sm text-gray-200">user@email.com</p>
       </div>
 
-      <!-- Editable Fields Card -->
-      <div class="flex-1 bg-white shadow-lg rounded-2xl p-8 relative">
-        <form class="space-y-6">
-          <!-- Row -->
-          <div>
-            <label class="block text-gray-500 text-sm mb-1">Username</label>
+      <!-- Editable Fields Section -->
+      <form
+        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6 
+               lg:shadow-none lg:bg-transparent lg:p-0"
+      >
+        <!-- Profile Section (mobile only, inside form) -->
+        <div class="flex flex-col items-center lg:hidden">
+          <div class="relative w-24 h-24">
             <div
-              class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+              class="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[#1E293B]"
             >
-              <input
-                type="text"
-                class="flex-1 bg-transparent focus:outline-none text-gray-700"
+              <img
+                :src="profileImage"
+                alt="User Photo"
+                class="w-full h-full object-cover"
               />
-              <button
-                type="button"
-                class="text-gray-500 hover:text-blue-600 transition"
-                @click="handleEdit('username')"
-              >
-                ✎
-              </button>
             </div>
+            <label
+              for="profileUploadMobile"
+              class="absolute bottom-0 right-0 bg-white text-[#1E3A8A] rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-200 transition"
+            >
+              ✎
+            </label>
+            <input
+              id="profileUploadMobile"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleProfileImageUpload"
+            />
           </div>
+          <h2 class="mt-3 text-lg font-semibold text-[#1E3A8A]">
+            First Name and Last Name
+          </h2>
+          <p class="text-sm text-[#1E3A8A]">user@email.com</p>
+        </div>
 
-          <!-- Row -->
-          <div>
-            <label class="block text-gray-500 text-sm mb-1">Contact No.</label>
-            <div
-              class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+        <!-- Fields -->
+        <div>
+          <label class="block text-gray-500 text-sm mb-1">Username</label>
+          <div
+            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+          >
+            <input
+              type="text"
+              class="flex-1 bg-transparent focus:outline-none text-gray-700"
+            />
+            <button
+              type="button"
+              class="text-gray-500 hover:text-blue-600 transition"
+              @click="handleEdit('username')"
             >
-              <input
-                type="text"
-                class="flex-1 bg-transparent focus:outline-none text-gray-700"
-              />
-              <button
-                type="button"
-                class="text-gray-500 hover:text-blue-600 transition"
-                @click="handleEdit('contact')"
-              >
-                ✎
-              </button>
-            </div>
+              ✎
+            </button>
           </div>
+        </div>
 
-          <!-- Row -->
-          <div>
-            <label class="block text-gray-500 text-sm mb-1">Gender</label>
-            <div
-              class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+        <div>
+          <label class="block text-gray-500 text-sm mb-1">Contact No.</label>
+          <div
+            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+          >
+            <input
+              type="text"
+              class="flex-1 bg-transparent focus:outline-none text-gray-700"
+            />
+            <button
+              type="button"
+              class="text-gray-500 hover:text-blue-600 transition"
+              @click="handleEdit('contact')"
             >
-              <input
-                type="text"
-                class="flex-1 bg-transparent focus:outline-none text-gray-700"
-              />
-              <button
-                type="button"
-                class="text-gray-500 hover:text-blue-600 transition"
-                @click="handleEdit('gender')"
-              >
-                ✎
-              </button>
-            </div>
+              ✎
+            </button>
           </div>
+        </div>
 
-          <!-- Row -->
-          <div>
-            <label class="block text-gray-500 text-sm mb-1">Address</label>
-            <div
-              class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+        <div>
+          <label class="block text-gray-500 text-sm mb-1">Gender</label>
+          <div
+            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+          >
+            <input
+              type="text"
+              class="flex-1 bg-transparent focus:outline-none text-gray-700"
+            />
+            <button
+              type="button"
+              class="text-gray-500 hover:text-blue-600 transition"
+              @click="handleEdit('gender')"
             >
-              <input
-                type="text"
-                class="flex-1 bg-transparent focus:outline-none text-gray-700"
-              />
-              <button
-                type="button"
-                class="text-gray-500 hover:text-blue-600 transition"
-                @click="handleEdit('address')"
-              >
-                ✎
-              </button>
-            </div>
+              ✎
+            </button>
           </div>
-        </form>
+        </div>
+
+        <div>
+          <label class="block text-gray-500 text-sm mb-1">Address</label>
+          <div
+            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+          >
+            <input
+              type="text"
+              class="flex-1 bg-transparent focus:outline-none text-gray-700"
+            />
+            <button
+              type="button"
+              class="text-gray-500 hover:text-blue-600 transition"
+              @click="handleEdit('address')"
+            >
+              ✎
+            </button>
+          </div>
+        </div>
 
         <!-- Change Password Button -->
-        <div class="mt-8">
+        <div class="pt-4">
           <button
+            type="submit"
             class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 rounded-lg shadow-md"
           >
             Change Password
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
