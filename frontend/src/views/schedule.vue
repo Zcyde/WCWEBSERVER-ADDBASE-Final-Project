@@ -51,6 +51,7 @@
             class="text-right p-1"
           >{{ day.dayOfMonth }}</div>
 
+          <!-- EVENT DISPLAY LOGIC (Now driven by calendarDays from Composable) -->
           <div v-if="day.events && day.events.length" class="space-y-0.5">
             <div
               v-for="event in day.events"
@@ -67,6 +68,7 @@
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none opacity-10 z-0"
     >
+      <!-- Assuming you have an image at this path -->
       <img src="../dmLogo.png" alt="watermark" class="w-96" />
     </div>
 
@@ -74,52 +76,18 @@
   </div>
 </template>
 
-<script>
-import {
-  generateCalendarDays,
-  getCurrentMonthYearDisplay,
+<script setup>
+// --- LOGIC / SCRIPT (Minimized and Delegated to Composable) ---
+import AddEventModal from "../components/AddEventModal.vue";
+import { useScheduleLogic } from "../composables/useScheduleLogic.js";
+
+// Destructure all logic from the composable
+const {
+  dayNames,
+  showAddEventModal,
+  currentMonthYearDisplay,
+  calendarDays,
   nextMonth,
   previousMonth,
-  calendarState,
-} from "../calendarLogic.js";
-import { store } from "../eventStore.js";
-import AddEventModal from "../components/AddEventModal.vue"; // 💥 Import the new component
-import { computed, watch } from "vue";
-
-export default {
-  name: "Schedule",
-  components: {
-    AddEventModal, // 💥 Register the new component
-  },
-  // The 'setup' function holds the core calendar reactivity logic
-  setup() {
-    // Computed properties for reactivity
-    const currentMonthYearDisplay = computed(() =>
-      getCurrentMonthYearDisplay()
-    );
-    const calendarDays = computed(() => generateCalendarDays());
-
-    // Watcher for store changes (from Planner or Modal) and view date changes (from navigation)
-    watch(
-      [() => store.events, () => calendarState.viewDate],
-      () => {
-        // The calendarDays computed property will automatically re-run and update the template
-      },
-      { deep: true, immediate: true }
-    );
-
-    return {
-      currentMonthYearDisplay,
-      calendarDays,
-      nextMonth,
-      previousMonth,
-    };
-  },
-  data() {
-    return {
-      dayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      showAddEventModal: false, // Controls the visibility of the AddEventModal component
-    };
-  },
-};
+} = useScheduleLogic();
 </script>

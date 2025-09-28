@@ -94,9 +94,13 @@ const emit = defineEmits(["close"]);
 // Helper to get today's date in YYYY-MM-DD format
 const getTodayDateString = () => {
   const defaultDate = calendarState.viewDate || new Date();
-  return `${defaultDate.getFullYear()}-${String(
-    defaultDate.getMonth() + 1
-  ).padStart(2, "0")}-${String(defaultDate.getDate()).padStart(2, "0")}`;
+  // Ensure the object used for date parts is a valid Date object if calendarState.viewDate is null
+  const dateObj = defaultDate instanceof Date ? defaultDate : new Date();
+
+  return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(dateObj.getDate()).padStart(2, "0")}`;
 };
 
 const newPlan = reactive({
@@ -118,16 +122,24 @@ watch(
   { immediate: true }
 );
 
-const submitPlan = () => {
-  // 1. Add event to the global store
-  store.addEvent({
+const submitPlan = async () => {
+  if (!newPlan.title || !newPlan.date) return;
+
+  // 1. Construct the data object *without* a client-side ID. The backend will assign it.
+  const planData = {
     title: newPlan.title,
     date: newPlan.date,
     color: newPlan.color,
     folderId: props.folder.id,
-  });
+    // REMOVED: id: `e-${Date.now()}`
+  };
 
-  // 2. Emit the close event to the parent
+  // 2. Add event to the global store and WAIT for the API call to complete.
+  // The store receives the complete object (including the new backend ID)
+  // and pushes it into the reactive array.
+  await store.addEvent(planData);
+
+  // 3. Emit the close event to the parent.
   emit("close");
 };
 </script>
