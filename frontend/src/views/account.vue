@@ -13,7 +13,7 @@
     <div class="w-full max-w-5xl flex flex-col lg:flex-row gap-6">
       <!-- Profile Section (desktop only) -->
       <div
-        class="hidden lg:flex flex-1 flex-col items-center justify-center relative 
+        class="hidden lg:flex flex-1 flex-col items-center justify-center relative
                text-white bg-[#1E293B] rounded-2xl p-6 shadow-md"
       >
         <div class="relative w-32 h-32">
@@ -22,7 +22,7 @@
             class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white"
           >
             <img
-              :src="profileImage"
+              :src="user.avatar"
               alt="User Photo"
               class="w-full h-full object-cover"
             />
@@ -50,8 +50,9 @@
 
       <!-- Editable Fields Section -->
       <form
-        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6 
+        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6
                lg:shadow-none lg:bg-transparent lg:p-0"
+        @submit.prevent="updateUser"
       >
         <!-- Profile Section (mobile only, inside form) -->
         <div class="flex flex-col items-center lg:hidden">
@@ -60,7 +61,7 @@
               class="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[#1E293B]"
             >
               <img
-                :src="profileImage"
+                :src="user.avatar"
                 alt="User Photo"
                 class="w-full h-full object-cover"
               />
@@ -89,16 +90,20 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Username</label>
           <div
-            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editUsername ? 'border' : 'border-0']"
           >
             <input
+              v-model="user.username"
               type="text"
+              :disabled="!editUsername"
+              @keyup.enter="updateUser"
+              placeholder="johndoe"
               class="flex-1 bg-transparent focus:outline-none text-gray-700"
             />
             <button
               type="button"
-              class="text-gray-500 hover:text-blue-600 transition"
-              @click="handleEdit('username')"
+              @click="editUsername = !editUsername"
+              class="ml-2 text-gray-500 hover:text-gray-700"
             >
               ✎
             </button>
@@ -108,16 +113,20 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Contact No.</label>
           <div
-            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editContact ? 'border' : 'border-0']"
           >
             <input
+              v-model="user.contact"
               type="text"
+              :disabled="!editContact"
+              @keyup.enter="updateUser"
+              placeholder="09123456789"
               class="flex-1 bg-transparent focus:outline-none text-gray-700"
             />
             <button
               type="button"
-              class="text-gray-500 hover:text-blue-600 transition"
-              @click="handleEdit('contact')"
+              @click="editContact = !editContact"
+              class="ml-2 text-gray-500 hover:text-gray-700"
             >
               ✎
             </button>
@@ -127,16 +136,20 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Gender</label>
           <div
-            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editGender ? 'border' : 'border-0']"
           >
             <input
+              v-model="user.gender"
               type="text"
+              :disabled="!editGender"
+              @keyup.enter="updateUser"
+              placeholder="Male"
               class="flex-1 bg-transparent focus:outline-none text-gray-700"
             />
             <button
               type="button"
-              class="text-gray-500 hover:text-blue-600 transition"
-              @click="handleEdit('gender')"
+              @click="editGender = !editGender"
+              class="ml-2 text-gray-500 hover:text-gray-700"
             >
               ✎
             </button>
@@ -146,29 +159,33 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Address</label>
           <div
-            class="flex items-center border rounded-lg px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editAddress ? 'border' : 'border-0']"
           >
             <input
+              v-model="user.address"
               type="text"
+              :disabled="!editAddress"
+              @keyup.enter="updateUser"
+              placeholder="123 Anywhere St."
               class="flex-1 bg-transparent focus:outline-none text-gray-700"
             />
             <button
               type="button"
-              class="text-gray-500 hover:text-blue-600 transition"
-              @click="handleEdit('address')"
+              @click="editAddress = !editAddress"
+              class="ml-2 text-gray-500 hover:text-gray-700"
             >
               ✎
             </button>
           </div>
         </div>
 
-        <!-- Change Password Button -->
+        <!-- Update Profile Button -->
         <div class="pt-4">
           <button
             type="submit"
             class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 rounded-lg shadow-md"
           >
-            Change Password
+            Update Profile
           </button>
         </div>
       </form>
@@ -178,17 +195,49 @@
 
 <script setup>
 import { ref } from "vue";
+import { useAccountLogic } from "../composables/useAccountLogic.js";
 
-const profileImage = ref("https://placehold.co/200x200?text=User");
+const { user, loadUser, uploadAvatar } = useAccountLogic();
 
-function handleEdit(field) {
-  alert(`Edit ${field} clicked!`);
+const editUsername = ref(false);
+const editContact = ref(false);
+const editGender = ref(false);
+const editAddress = ref(false);
+
+async function updateUser() {
+  try {
+    const response = await fetch('http://localhost:3000/api/user', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: user.value.username,
+        contact: user.value.contact,
+        gender: user.value.gender,
+        address: user.value.address,
+      }),
+    });
+    if (response.ok) {
+      alert('Profile updated successfully!');
+      // Disable all edits after saving
+      editUsername.value = false;
+      editContact.value = false;
+      editGender.value = false;
+      editAddress.value = false;
+    } else {
+      alert('Failed to update profile.');
+    }
+  } catch (error) {
+    console.error('Failed to update user:', error);
+    alert('Failed to update profile.');
+  }
 }
 
 function handleProfileImageUpload(event) {
   const file = event.target.files[0];
   if (file) {
-    profileImage.value = URL.createObjectURL(file);
+    uploadAvatar(file);
   }
 }
 </script>

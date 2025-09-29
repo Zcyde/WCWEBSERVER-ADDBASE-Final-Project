@@ -50,7 +50,7 @@
           {{ file.name }}
         </span>
         <a
-          :href="file.url"
+          :href="`http://localhost:3000${file.path}`"
           :download="file.name"
           class="mt-1 text-xs md:text-sm text-blue-600 hover:underline"
         >
@@ -70,26 +70,44 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import api from "../services/api.js";
 
 const selectedFiles = ref([]);
 const uploadedFiles = ref([]);
 const fileInput = ref(null);
 
+const loadFiles = async () => {
+  try {
+    const response = await api.get('/files');
+    uploadedFiles.value = response.data;
+  } catch (error) {
+    console.error('Failed to load files:', error);
+  }
+};
+
 function handleFileSelection(event) {
   selectedFiles.value = Array.from(event.target.files);
 }
 
-function submitFiles() {
+async function submitFiles() {
   if (selectedFiles.value.length === 0) return;
 
-  selectedFiles.value.forEach((file) => {
-    uploadedFiles.value.push({
-      name: file.name,
-      size: file.size,
-      url: URL.createObjectURL(file),
-    });
+  const formData = new FormData();
+  selectedFiles.value.forEach(file => {
+    formData.append('files', file);
   });
+
+  try {
+    await api.post('/files', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    await loadFiles(); // Refresh the list
+  } catch (error) {
+    console.error('Failed to upload files:', error);
+  }
 
   // reset selection
   selectedFiles.value = [];
@@ -97,4 +115,8 @@ function submitFiles() {
     fileInput.value.value = ""; // clears input so user can reselect same file
   }
 }
+
+onMounted(() => {
+  loadFiles();
+});
 </script>
