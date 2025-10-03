@@ -1,3 +1,4 @@
+// NEW ROUTER FOR CHECKING
 import { createRouter, createWebHistory } from 'vue-router';
 import MainLayout from '../views/mainlayout.vue';
 
@@ -23,16 +24,16 @@ const routes = [
     component: SignIn
   },
 
-  // MainLayout routing
+  // MainLayout routing WITH AUTHENTICATION
   {
     path: '/',
     component: MainLayout,
     children: [
-      { path: '', name: 'Dashboard', component: Dashboard },
-      { path: 'planner', name: 'Planner', component: Planner },
-      { path: 'schedule', name: 'Schedule', component: Schedule },
-      { path: 'account', name: 'Account', component: () => import('../views/account.vue') }, // Lazy-loaded
-      { path: 'portfolio', name: 'Portfolio', component: Portfolio }
+      { path: '', name: 'Dashboard', component: Dashboard, meta: {requiresAuth: true} },
+      { path: 'planner', name: 'Planner', component: Planner, meta: {requiresAuth: true} },
+      { path: 'schedule', name: 'Schedule', component: Schedule, meta: {requiresAuth: true} },
+      { path: 'account', name: 'Account', component: () => import('../views/account.vue'), meta: {requiresAuth: true} }, // Lazy-loaded
+      { path: 'portfolio', name: 'Portfolio', component: Portfolio, meta: {requiresAuth: true} }
     ]
   }
 ];
@@ -42,4 +43,19 @@ const router = createRouter({
   routes,
 });
 
+// Authentication Guard (meta field)
+
+router.beforeEach((to, from, next) => { //Checks everytime a user changes pages if logged in
+  const isAuthenticated = !!localStorage.getItem('authToken'); // Example authentication check
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isAuthPage = ['Login', 'Sign-In'].includes(to.name); //Makes the login and sign up pages the pages that redirect if logged in
+
+  if (requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' });
+  } else if (isAuthPage && isAuthenticated) {
+    next({ name: 'Dashboard' });
+  } else {
+    next();
+  }
+});
 export default router;

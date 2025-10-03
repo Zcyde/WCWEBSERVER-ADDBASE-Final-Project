@@ -1,42 +1,36 @@
 <template>
-  <div class="flex h-screen">
-    <!-- Sidebar (desktop only) -->
+  <div class="flex h-screen bg-white">
     <aside
-      class="hidden md:flex w-56 bg-[#162238] text-white flex-col items-start p-4 space-y-6"
+      class="hidden md:flex w-64 bg-[#1e293b] text-white flex-col items-start p-4 pt-6 space-y-6 shadow-2xl transition-all duration-300"
     >
-      <div class="flex items-center space-x-2">
-        <img src="../dmLogo.png" alt="Logo" class="w-10 h-10 rounded-full" />
-        <span class="font-bold text-lg">Domore</span>
+      <div class="flex items-center justify-center pb-4 border-b border-gray-700/50 w-full mb-2">
+        <span class="font-extrabold text-xl text-white">Domore</span>
       </div>
 
-      <nav class="flex flex-col space-y-4 w-full">
-        <router-link
-          to="/account"
-          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
-        >
-          <span class="text-xl">👤</span>
-          <span>Account</span>
-        </router-link>
-
+      <nav class="flex flex-col space-y-2 w-full">
         <router-link
           to="/"
-          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
+          class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+          active-class="bg-gray-100 font-semibold text-black shadow-md"
+          exact-active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
-          <span class="text-xl">🔲</span>
+          <span class="text-xl">📊</span>
           <span>Dashboard</span>
         </router-link>
 
         <router-link
           to="/planner"
-          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
+          class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+          active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
-          <span class="text-xl">📄</span>
+          <span class="text-xl">📝</span>
           <span>Planner</span>
         </router-link>
 
         <router-link
           to="/schedule"
-          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
+          class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+          active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
           <span class="text-xl">📅</span>
           <span>Schedule</span>
@@ -44,44 +38,75 @@
 
         <router-link
           to="/portfolio"
-          class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-md"
+          class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
+          active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
           <span class="text-xl">📁</span>
           <span>Portfolio</span>
         </router-link>
+
+        <div class="pt-6 mt-auto border-t-2 border-gray-500 w-full">
+          <router-link
+            to="/account"
+            class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-2"
+            active-class="bg-gray-100 font-semibold text-black shadow-md"
+          >
+            <span class="text-xl">👤</span>
+            <span>Account</span>
+          </router-link>
+        </div>
       </nav>
     </aside>
 
-    <!-- Main content -->
-    <main class="flex-1 relative p-6 pb-20 md:pb-6">
+    <main class="flex-1 relative p-6 bg-white overflow-y-auto">
       <router-view />
     </main>
 
-    <!-- Bottom navigation (mobile only) -->
     <nav
-      class="fixed bottom-0 left-0 w-full bg-[#162238] text-white flex justify-around items-center py-2 md:hidden shadow-lg"
+      class="fixed bottom-0 left-0 w-full bg-[#1e293b] text-white flex justify-around items-center py-2 md:hidden shadow-2xl z-10"
     >
-      <router-link to="/account" class="flex flex-col items-center">
+      <router-link
+        to="/account"
+        class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
+        active-class="text-indigo-400"
+      >
         <span class="text-xl">👤</span>
         <span class="text-xs">Account</span>
       </router-link>
 
-      <router-link to="/" class="flex flex-col items-center">
-        <span class="text-xl">🔲</span>
+      <router-link
+        to="/"
+        class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
+        active-class="text-indigo-400"
+        exact-active-class="text-indigo-400"
+      >
+        <span class="text-xl">📊</span>
         <span class="text-xs">Dashboard</span>
       </router-link>
 
-      <router-link to="/planner" class="flex flex-col items-center">
-        <span class="text-xl">📄</span>
+      <router-link
+        to="/planner"
+        class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
+        active-class="text-indigo-400"
+      >
+        <span class="text-xl">📝</span>
         <span class="text-xs">Planner</span>
       </router-link>
 
-      <router-link to="/schedule" class="flex flex-col items-center">
+      <router-link
+        to="/schedule"
+        class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
+        active-class="text-indigo-400"
+      >
         <span class="text-xl">📅</span>
         <span class="text-xs">Schedule</span>
       </router-link>
 
-      <router-link to="/portfolio" class="flex flex-col items-center">
+      <router-link
+        to="/portfolio"
+        class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
+        active-class="text-indigo-400"
+      >
         <span class="text-xl">📁</span>
         <span class="text-xs">Portfolio</span>
       </router-link>

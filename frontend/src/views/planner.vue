@@ -4,23 +4,14 @@
     <div class="relative mb-6 border-b border-gray-300 pb-3 flex items-center justify-center">
       <!-- Title -->
       <h1
-        class="py-2 px-6 rounded-full border-2 border-black 
-               text-xl sm:text-2xl font-bold text-gray-800 
-               bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
-      >
-        Planner
-      </h1>
+        class="py-2 px-6 rounded-full border-2 border-black text-xl sm:text-2xl font-bold text-gray-800 bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
+      >Planner</h1>
 
       <!-- Add Planner Button -->
       <button
         v-if="!selectedFolder"
         @click="showAddFolderModal = true"
-        class="absolute right-0 top-1/2 -translate-y-1/2 
-               py-1 px-3 sm:py-1.5 sm:px-4 rounded-full 
-               text-sm sm:text-base font-medium 
-               bg-gradient-to-b from-blue-400 to-blue-600 
-               border border-blue-700 shadow-md text-white 
-               hover:shadow-lg hover:from-blue-500 transition-all"
+        class="absolute right-0 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-full text-sm sm:text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-md text-white hover:shadow-lg hover:from-blue-500 transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -99,6 +90,12 @@
           </div>
         </form>
       </div>
+    </div>
+    <!-- Watermark -->
+    <div
+      class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none opacity-10 z-0"
+    >
+      <img src="../dmLogo.png" alt="watermark" class="w-60 sm:w-96" />
     </div>
   </div>
 </template>

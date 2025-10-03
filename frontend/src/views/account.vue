@@ -1,40 +1,24 @@
 <template>
-  <div class="flex-1 p-10 flex flex-col items-center bg-gray-50">
-    <!-- Page Heading -->
+  <div class="flex-1 p-10 flex flex-col items-center bg-white">
     <div class="mb-10">
       <h1
         class="py-2 px-8 rounded-full border-2 border-black-600 font-sans text-xl font-bold text-black-800 bg-gradient-to-b from-gray-300 to-gray-400 shadow-md"
-      >
-        User Profile
-      </h1>
+      >User Profile</h1>
     </div>
 
-    <!-- Responsive Layout -->
     <div class="w-full max-w-5xl flex flex-col lg:flex-row gap-6">
-      <!-- Profile Section (desktop only) -->
       <div
-        class="hidden lg:flex flex-1 flex-col items-center justify-center relative
-               text-white bg-[#1E293B] rounded-2xl p-6 shadow-md"
+        class="hidden lg:flex flex-1 flex-col items-center justify-center relative text-white bg-[#1E293B] rounded-2xl p-6 shadow-md"
       >
         <div class="relative w-32 h-32">
-          <!-- Profile Picture -->
-          <div
-            class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white"
-          >
-            <img
-              :src="user.avatar"
-              alt="User Photo"
-              class="w-full h-full object-cover"
-            />
+          <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white">
+            <img :src="user.avatar" alt="User Photo" class="w-full h-full object-cover" />
           </div>
 
-          <!-- Edit Button Overlay -->
           <label
             for="profileUpload"
             class="absolute bottom-0 right-0 bg-white text-[#1E3A8A] rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-200 transition"
-          >
-            ✎
-          </label>
+          >✎</label>
           <input
             id="profileUpload"
             type="file"
@@ -48,30 +32,19 @@
         <p class="text-sm text-gray-200">user@email.com</p>
       </div>
 
-      <!-- Editable Fields Section -->
       <form
-        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6
-               lg:shadow-none lg:bg-transparent lg:p-0"
+        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6 lg:shadow-none lg:bg-transparent lg:p-0"
         @submit.prevent="updateUser"
       >
-        <!-- Profile Section (mobile only, inside form) -->
         <div class="flex flex-col items-center lg:hidden">
           <div class="relative w-24 h-24">
-            <div
-              class="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[#1E293B]"
-            >
-              <img
-                :src="user.avatar"
-                alt="User Photo"
-                class="w-full h-full object-cover"
-              />
+            <div class="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[#1E293B]">
+              <img :src="user.avatar" alt="User Photo" class="w-full h-full object-cover" />
             </div>
             <label
               for="profileUploadMobile"
               class="absolute bottom-0 right-0 bg-white text-[#1E3A8A] rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-200 transition"
-            >
-              ✎
-            </label>
+            >✎</label>
             <input
               id="profileUploadMobile"
               type="file"
@@ -80,13 +53,10 @@
               @change="handleProfileImageUpload"
             />
           </div>
-          <h2 class="mt-3 text-lg font-semibold text-[#1E3A8A]">
-            First Name and Last Name
-          </h2>
+          <h2 class="mt-3 text-lg font-semibold text-[#1E3A8A]">First Name and Last Name</h2>
           <p class="text-sm text-[#1E3A8A]">user@email.com</p>
         </div>
 
-        <!-- Fields -->
         <div>
           <label class="block text-gray-500 text-sm mb-1">Username</label>
           <div
@@ -104,9 +74,7 @@
               type="button"
               @click="editUsername = !editUsername"
               class="ml-2 text-gray-500 hover:text-gray-700"
-            >
-              ✎
-            </button>
+            >✎</button>
           </div>
         </div>
 
@@ -127,9 +95,7 @@
               type="button"
               @click="editContact = !editContact"
               class="ml-2 text-gray-500 hover:text-gray-700"
-            >
-              ✎
-            </button>
+            >✎</button>
           </div>
         </div>
 
@@ -150,9 +116,7 @@
               type="button"
               @click="editGender = !editGender"
               class="ml-2 text-gray-500 hover:text-gray-700"
-            >
-              ✎
-            </button>
+            >✎</button>
           </div>
         </div>
 
@@ -173,20 +137,15 @@
               type="button"
               @click="editAddress = !editAddress"
               class="ml-2 text-gray-500 hover:text-gray-700"
-            >
-              ✎
-            </button>
+            >✎</button>
           </div>
         </div>
 
-        <!-- Update Profile Button -->
         <div class="pt-4">
           <button
             type="submit"
             class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 rounded-lg shadow-md"
-          >
-            Update Profile
-          </button>
+          >Update Profile</button>
         </div>
       </form>
     </div>
@@ -206,10 +165,10 @@ const editAddress = ref(false);
 
 async function updateUser() {
   try {
-    const response = await fetch('http://localhost:3000/api/user', {
-      method: 'PUT',
+    const response = await fetch("http://localhost:3000/api/user", {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username: user.value.username,
@@ -219,18 +178,18 @@ async function updateUser() {
       }),
     });
     if (response.ok) {
-      alert('Profile updated successfully!');
+      alert("Profile updated successfully!");
       // Disable all edits after saving
       editUsername.value = false;
       editContact.value = false;
       editGender.value = false;
       editAddress.value = false;
     } else {
-      alert('Failed to update profile.');
+      alert("Failed to update profile.");
     }
   } catch (error) {
-    console.error('Failed to update user:', error);
-    alert('Failed to update profile.');
+    console.error("Failed to update user:", error);
+    alert("Failed to update profile.");
   }
 }
 
