@@ -30,12 +30,19 @@ const folderSchema = new mongoose.Schema({
 const Folder = mongoose.model('Folder', folderSchema);
 
 const eventSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  date: { type: Date, required: true },
-  title: { type: String, required: true },
-  description: String,
-  color: { type: String, default: 'bg-indigo-500' },
-  folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder' },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  date: { type: Date, required: true },
+  title: { type: String, required: true },
+  description: String,
+  color: { type: String, default: 'bg-indigo-500' },
+  folderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder' },
+  // 🔑 NEW: Add plannerFiles array to store file metadata
+  plannerFiles: [{
+    name: String,
+    url: String, // The public URL to view the file
+    type: String,
+    size: Number,
+  }]
 });
 const Event = mongoose.model('Event', eventSchema);
 
@@ -197,22 +204,78 @@ app.post('/api/events', authenticateToken, async (req, res) => {
   }
 });
 
-app.put('/api/events/:id', authenticateToken, async (req, res) => {
-  try {
+// 🔑 MODIFIED: Event Update API to handle file uploads
+app.put('/api/events/:id', authenticateToken, upload.array('files'), async (req, res) => {
     const id = req.params.id;
-    console.log(`PUT /api/events/${id} - Updating event for user ${req.userId}`);
-    const updatedEvent = await Event.findOneAndUpdate(
-      { _id: id, userId: req.userId },
-      req.body,
-      { new: true }
-    );
-    if (!updatedEvent) return res.status(404).json({ error: 'Event not found' });
-    console.log(`Event updated: ${updatedEvent._id}`);
-    res.json(updatedEvent);
-  } catch (err) {
-    console.error('Error updating event:', err.message);
-    res.status(500).json({ error: err.message });
-  }
+    const newFiles = req.files || [];
+
+    let eventData;
+    
+    try {
+        // 🔑 1. PARSE METADATA: Handle both FormData (req.body.data) and standard JSON (req.body)
+        if (req.body.data) {
+            // Case 1: FormData was used (files were staged or removed files flag was true)
+            eventData = JSON.parse(req.body.data);
+        } else {
+            // Case 2: Standard JSON was used (only event fields changed, no file changes)
+            eventData = req.body;
+        }
+    } catch (e) {
+        // If JSON parsing fails, delete files and return error
+        newFiles.forEach(file => fs.unlinkSync(file.path)); 
+        return res.status(400).json({ error: 'Invalid data format.' });
+    }
+
+    try {
+        console.log(`PUT /api/events/${id} - Updating event (new files: ${newFiles.length}) for user ${req.userId}`);
+        
+        // 2. Prepare new file metadata
+        const newFileMetadata = newFiles.map(file => ({
+            name: file.originalname,
+            url: `/uploads/${file.filename}`, 
+            type: file.mimetype,
+            size: file.size,
+        }));
+
+        // 3. COMBINE: Use the `plannerFiles` array sent from the frontend (the retained list)
+        // and append the newly uploaded file metadata.
+        const retainedFiles = eventData.plannerFiles || [];
+        const finalPlannerFiles = [
+            ...retainedFiles, 
+            ...newFileMetadata
+        ];
+        
+        // 4. Construct the final update object
+        const updateObject = {
+            ...eventData, 
+            plannerFiles: finalPlannerFiles,
+            // 🔑 FIX: The MongoDB document uses _id, but the front-end sends 'id' if you're spreading
+            // We delete both 'id' and '_id' from the body to prevent Mongoose errors
+            // since the actual ID comes from the URL param.
+        };
+        delete updateObject.id;
+        delete updateObject._id;
+
+        // 5. Update the event in MongoDB
+        const updatedEvent = await Event.findOneAndUpdate(
+            { _id: id, userId: req.userId },
+            updateObject,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedEvent) {
+            newFiles.forEach(file => fs.unlinkSync(file.path)); 
+            return res.status(404).json({ error: 'Event not found' });
+        }
+        
+        console.log(`Event updated: ${updatedEvent._id}. Total files: ${finalPlannerFiles.length}`);
+        res.json(updatedEvent);
+
+    } catch (err) {
+        console.error('Error updating event (with files):', err.message);
+        newFiles.forEach(file => fs.unlinkSync(file.path)); 
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.delete('/api/events/:id', authenticateToken, async (req, res) => {

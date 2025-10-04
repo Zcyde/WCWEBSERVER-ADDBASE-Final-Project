@@ -40,11 +40,11 @@ export const store = reactive({
         }
     },
 
-    // ... rest of your store methods (addEvent, addFolder) ...
-    // ... (They are fine as they are, using the try/catch blocks) ...
     async addEvent(eventData) {
         try {
             // --- Backend API version ---
+            // NOTE: When creating an event, the files are typically sent here as well, 
+            // but the file update (U) is handled separately below.
             const response = await api.post('/events', eventData);
             const newEvent = response.data;
 
@@ -64,6 +64,38 @@ export const store = reactive({
             localStorage.setItem('events', JSON.stringify(this.events));
         }
     },
+
+    // 🔑 NEW METHOD: Handles the file upload and plan update
+async updateEventWithFiles(formData) {
+    // We assume the plan ID is contained within the 'data' field of the FormData object.
+    const planData = JSON.parse(formData.get('data'));
+    const planId = planData.id;
+
+    try {
+        // --- Backend API version ---
+        // IMPORTANT: We use a special configuration here.
+        // We set 'Content-Type' to undefined so Axios and the browser can automatically set 
+        // the boundary necessary for multipart/form-data uploads.
+        const response = await api.put(`/events/${planId}`, formData, {
+            headers: {
+                // Axios will automatically set the correct 'multipart/form-data' boundary
+                'Content-Type': undefined, 
+            },
+        });
+        
+        const savedPlan = response.data;
+        // Update the local state with the data returned from the backend
+        const index = this.events.findIndex(e => e._id === savedPlan._id); // Use _id for MongoDB
+        if (index !== -1) {
+            this.events[index] = savedPlan;
+        }
+
+        console.log(`Successfully updated plan ${savedPlan._id} and files on backend.`);
+    } catch (error) {
+        // ... rest of the error logic ...
+        throw new Error("Failed to upload files and update event on server.");
+    }
+},
 
     async addFolder(name, color = 'bg-gray-400') {
         if (!name) return;
