@@ -82,7 +82,7 @@
     </div>
 
     <!-- Create Plan Modal -->
-    <PlanInputModal :is-visible="showModal" :folder="folder" @close="showModal = false" />
+    <PlanInputModal :is-visible="showModal" :folder="folder" @close="showModal = false" @event-added="loadEvents" />
 
     <!-- ✅ Timer Overlay Modal -->
     <div
@@ -170,7 +170,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { store } from "../eventStore.js";
 import PlanInputModal from "./PlanInputModal.vue";
 
@@ -182,9 +182,19 @@ defineEmits(["back-to-list"]);
 const showModal = ref(false);
 
 /* ---------- Plans ---------- */
-const filteredPlans = computed(() =>
-  store.events.filter((event) => event.folderId === props.folder.id)
-);
+const filteredPlans = ref([]);
+
+const loadEvents = async () => {
+  filteredPlans.value = await store.loadEventsByFolder(props.folder._id);
+};
+
+onMounted(() => {
+  loadEvents();
+});
+
+watch(() => props.folder._id, () => {
+  loadEvents();
+});
 
 const getBorderClass = (colorClass) => colorClass.replace("bg-", "border-");
 

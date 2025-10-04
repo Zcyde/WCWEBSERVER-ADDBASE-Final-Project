@@ -165,7 +165,12 @@ app.post('/api/folders', authenticateToken, async (req, res) => {
 app.get('/api/events', authenticateToken, async (req, res) => {
   try {
     console.log(`GET /api/events - Fetching events for user ${req.userId}`);
-    const events = await Event.find({ userId: req.userId }).sort({ date: 1 });
+    const folderId = req.query.folderId;
+    let query = { userId: req.userId };
+    if (folderId) {
+      query.folderId = folderId;
+    }
+    const events = await Event.find(query).sort({ date: 1 });
     console.log(`Found ${events.length} events`);
     // Format date to 'YYYY-MM-DD' for frontend compatibility
     const formattedEvents = events.map(event => {

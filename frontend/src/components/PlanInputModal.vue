@@ -130,7 +130,7 @@ const submitPlan = async () => {
     title: newPlan.title,
     date: newPlan.date,
     color: newPlan.color,
-    folderId: props.folder.id,
+    folderId: props.folder._id,
     // REMOVED: id: `e-${Date.now()}`
   };
 
@@ -141,5 +141,7 @@ const submitPlan = async () => {
 
   // 3. Emit the close event to the parent.
   emit("close");
+  // 4. Emit event to notify parent to reload events
+  emit("event-added");
 };
 </script>

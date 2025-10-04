@@ -40,6 +40,20 @@ export const store = reactive({
         }
     },
 
+    async loadEventsByFolder(folderId) {
+        if (!localStorage.getItem('authToken')) {
+            console.warn("Skipping loadEventsByFolder: User is not authenticated.");
+            return [];
+        }
+        try {
+            const response = await api.get('/events', { params: { folderId } });
+            return response.data;
+        } catch (error) {
+            console.error("Failed to load events by folder from backend:", error);
+            return [];
+        }
+    },
+
     // ... rest of your store methods (addEvent, addFolder) ...
     // ... (They are fine as they are, using the try/catch blocks) ...
     async addEvent(eventData) {
