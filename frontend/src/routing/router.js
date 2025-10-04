@@ -46,16 +46,25 @@ const router = createRouter({
 
 // Authentication Guard (meta field)
 
-router.beforeEach((to, from, next) => { //Checks everytime a user changes pages if logged in
-  const isAuthenticated = !!localStorage.getItem('authToken'); // Example authentication check
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('authToken');
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isAuthPage = ['Login', 'Sign-In'].includes(to.name); //Makes the login and sign up pages the pages that redirect if logged in
+  const isAuthPage = ['Login', 'Sign-In'].includes(to.name);
 
-  if (requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' });
-  } else if (isAuthPage && isAuthenticated) {
-    next({ name: 'Dashboard' });
-  } else {
+  // 1. If the route requires auth AND the user is NOT authenticated,
+  // AND the destination is NOT already the Login page, redirect to Login.
+  if (requiresAuth && !isAuthenticated && to.name !== 'Login') {
+    return next({ name: 'Login' }); // Use 'return' to halt execution and resolve the guard
+  } 
+  
+  // 2. If the user IS authenticated AND trying to go to a public auth page (Login/Sign-In),
+  // redirect them away to the Dashboard.
+  else if (isAuthPage && isAuthenticated) {
+    return next({ name: 'Dashboard' }); // Use 'return' here as well
+  } 
+  
+  // 3. For all other cases (e.g., authenticated to protected, or unauthenticated to Login), proceed.
+  else {
     next();
   }
 });

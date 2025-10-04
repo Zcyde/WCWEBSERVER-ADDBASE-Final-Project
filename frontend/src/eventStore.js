@@ -6,6 +6,17 @@ export const store = reactive({
     folders: [],
 
     async loadData() {
+        // CLEANUP: Do not proceed with API calls if no token is present.
+        if (!localStorage.getItem('authToken')) {
+            console.warn("Skipping loadData: User is not authenticated.");
+            // Fallback to local storage (or just return empty arrays)
+            const savedFolders = localStorage.getItem('folders');
+            const savedEvents = localStorage.getItem('events');
+            this.folders = savedFolders ? JSON.parse(savedFolders) : [];
+            this.events = savedEvents ? JSON.parse(savedEvents) : [];
+            return;
+        }
+
         try {
             // --- Backend API version ---
             const [eventsRes, foldersRes] = await Promise.all([
@@ -17,8 +28,11 @@ export const store = reactive({
 
             console.log("Store loaded from backend. Folders:", this.folders.length, "Events:", this.events.length);
         } catch (error) {
+            // Note: If this 401, the API Interceptor handles the redirect.
+            // We only need to handle non-auth related failures here.
             console.error("Failed to load data from backend:", error);
-            // Fallback to localStorage if backend fails
+            
+            // Fallback to localStorage if backend fails (e.g., 500 server error)
             const savedFolders = localStorage.getItem('folders');
             const savedEvents = localStorage.getItem('events');
             this.folders = savedFolders ? JSON.parse(savedFolders) : [];
@@ -26,6 +40,8 @@ export const store = reactive({
         }
     },
 
+    // ... rest of your store methods (addEvent, addFolder) ...
+    // ... (They are fine as they are, using the try/catch blocks) ...
     async addEvent(eventData) {
         try {
             // --- Backend API version ---
