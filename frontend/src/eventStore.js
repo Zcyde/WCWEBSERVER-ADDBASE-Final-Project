@@ -79,6 +79,33 @@ export const store = reactive({
         }
     },
 
+    async updateEventWithFiles(planId, formData) {
+        try {
+            // --- Backend API version ---
+            // IMPORTANT: We use a special configuration here.
+            // We set 'Content-Type' to undefined so Axios and the browser can automatically set
+            // the boundary necessary for multipart/form-data uploads.
+            const response = await api.put(`/events/${planId}`, formData, {
+                headers: {
+                    // Axios will automatically set the correct 'multipart/form-data' boundary
+                    'Content-Type': undefined,
+                },
+            });
+
+            const savedPlan = response.data;
+            // Update the local state with the data returned from the backend
+            const index = this.events.findIndex(e => e._id === savedPlan._id); // Use _id for MongoDB
+            if (index !== -1) {
+                this.events[index] = savedPlan;
+            }
+
+            console.log(`Successfully updated plan ${savedPlan._id} and files on backend.`);
+        } catch (error) {
+            console.error("Failed to update event with files on backend:", error);
+            throw new Error("Failed to upload files and update event on server.");
+        }
+    },
+
     async addFolder(name, color = 'bg-gray-400') {
         if (!name) return;
 
