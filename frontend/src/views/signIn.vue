@@ -70,6 +70,9 @@
             <input type="password" v-model="password" placeholder="Password"
               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] focus:outline-none focus:ring-2 focus:ring-blue-400" />
 
+            <!-- Error message -->
+            <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+
             <!-- Buttons -->
             <div class="flex gap-4">
               <button type="reset"
@@ -98,29 +101,68 @@
 
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../services/api.js';
+
 export default {
-  data() {
+  setup() {
+    const firstName = ref('');
+    const lastName = ref('');
+    const gender = ref('');
+    const contactNumber = ref('');
+    const email = ref('');
+    const address = ref('');
+    const birthDate = ref('');
+    const username = ref('');
+    const password = ref('');
+    const router = useRouter();
+    const errorMessage = ref('');
+
+    const sanitizeNumber = (e) => {
+      contactNumber.value = e.target.value.replace(/\D/g, '').slice(0, 11);
+    };
+
+    const handleSignUp = async () => {
+      try {
+        const response = await api.post('/signup', {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          username: username.value,
+          password: password.value,
+          contact: contactNumber.value,
+          gender: gender.value,
+          address: address.value,
+          birthDate: birthDate.value,
+        });
+
+        // Store token and user in localStorage
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        // Redirect to dashboard or main page
+        router.push('/');
+      } catch (error) {
+        errorMessage.value = error.response?.data?.error || 'Signup failed';
+      }
+    };
+
     return {
-      firstName: '',
-      lastName: '',
-      gender: '',
-      contactNumber: '',
-      address: '',
-      birthDate: '',
-      username: '',
-      password: ''
+      firstName,
+      lastName,
+      gender,
+      contactNumber,
+      email,
+      address,
+      birthDate,
+      username,
+      password,
+      sanitizeNumber,
+      handleSignUp,
+      errorMessage,
     };
   },
-  methods: {
-    // sanitize input so it's only numbers & max 11 digits
-    sanitizeNumber(e) {
-      this.contactNumber = e.target.value.replace(/\D/g, '').slice(0, 11);
-    },
-
-    handleSignUp() {
-      console.log("Form submitted!", this.$data);
-    }
-  }
 };
 </script>
 

@@ -13,15 +13,7 @@
         <div
           class="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-gray-200"
         >
-          <svg
-            class="w-8 h-8 sm:w-12 sm:h-12 text-gray-400"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-            />
-          </svg>
+          <img :src="avatar" alt="User Avatar" class="w-full h-full object-cover" />
         </div>
         <div class="text-center sm:text-left">
           <h2 class="text-sm sm:text-xl text-gray-500 font-medium">Welcome Back,</h2>
@@ -144,6 +136,7 @@ import { useDashboardLogic } from "../composables/useDashboardLogic.js";
 const {
   firstName,
   lastName,
+  avatar,
   displayedFolders,
   plannerFolders,
   selectedFolderId,

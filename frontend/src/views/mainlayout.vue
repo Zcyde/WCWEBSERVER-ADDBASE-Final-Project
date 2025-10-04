@@ -54,6 +54,14 @@
             <span class="text-xl">👤</span>
             <span>Account</span>
           </router-link>
+
+          <button
+            @click="logout"
+            class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-2 w-full text-left"
+          >
+            <span class="text-xl">🚪</span>
+            <span>Logout</span>
+          </button>
         </div>
       </nav>
     </aside>
@@ -115,5 +123,7 @@
 </template>
 
 <script setup>
-// No script logic needed
+import { useAccountLogic } from "../composables/useAccountLogic.js";
+
+const { logout, user } = useAccountLogic();
 </script>

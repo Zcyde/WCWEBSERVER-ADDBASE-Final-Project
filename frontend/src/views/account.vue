@@ -28,8 +28,8 @@
           />
         </div>
 
-        <h2 class="mt-4 text-xl font-semibold">First Name and Last Name</h2>
-        <p class="text-sm text-gray-200">user@email.com</p>
+        <h2 class="mt-4 text-xl font-semibold">{{ user.firstName }} {{ user.lastName }}</h2>
+        <p class="text-sm text-gray-200">{{ user.email }}</p>
       </div>
 
       <form
@@ -53,8 +53,8 @@
               @change="handleProfileImageUpload"
             />
           </div>
-          <h2 class="mt-3 text-lg font-semibold text-[#1E3A8A]">First Name and Last Name</h2>
-          <p class="text-sm text-[#1E3A8A]">user@email.com</p>
+          <h2 class="mt-3 text-lg font-semibold text-[#1E3A8A]">{{ user.firstName }} {{ user.lastName }}</h2>
+          <p class="text-sm text-[#1E3A8A]">{{ user.email }}</p>
         </div>
 
         <div>
@@ -153,45 +153,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useAccountLogic } from "../composables/useAccountLogic.js";
 
-const { user, loadUser, uploadAvatar } = useAccountLogic();
+const { user, loadUser, uploadAvatar, updateUser } = useAccountLogic();
+
+onMounted(() => {
+  loadUser();
+});
 
 const editUsername = ref(false);
 const editContact = ref(false);
 const editGender = ref(false);
 const editAddress = ref(false);
-
-async function updateUser() {
-  try {
-    const response = await fetch("http://localhost:3000/api/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: user.value.username,
-        contact: user.value.contact,
-        gender: user.value.gender,
-        address: user.value.address,
-      }),
-    });
-    if (response.ok) {
-      alert("Profile updated successfully!");
-      // Disable all edits after saving
-      editUsername.value = false;
-      editContact.value = false;
-      editGender.value = false;
-      editAddress.value = false;
-    } else {
-      alert("Failed to update profile.");
-    }
-  } catch (error) {
-    console.error("Failed to update user:", error);
-    alert("Failed to update profile.");
-  }
-}
 
 function handleProfileImageUpload(event) {
   const file = event.target.files[0];

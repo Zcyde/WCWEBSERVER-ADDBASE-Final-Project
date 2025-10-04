@@ -14,8 +14,8 @@ const routes = [
   // This is the parent route for the main application layout
   // AuthLayout routing
   {
-    path: '/login', 
-    name: 'Login', 
+    path: '/login',
+    name: 'Login',
     component: Login
   },
   {
@@ -23,6 +23,7 @@ const routes = [
     name: 'Sign-In',
     component: SignIn
   },
+
 
   // MainLayout routing WITH AUTHENTICATION
   {

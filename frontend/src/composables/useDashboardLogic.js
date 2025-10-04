@@ -1,10 +1,13 @@
 import { ref, computed } from "vue";
 import { store } from "../eventStore.js";
+import { useAccountLogic } from "./useAccountLogic.js";
 
 export function useDashboardLogic() {
+  const { user } = useAccountLogic();
+
   // --- STATE ---
-  const firstName = ref("Marlon");
-  const lastName = ref("Garcia Michael");
+  const firstName = computed(() => user.value.firstName || "User");
+  const lastName = computed(() => user.value.lastName || "");
   const selectedFolderId = ref(null);
   const isDataLoaded = ref(false);
 
@@ -20,6 +23,8 @@ export function useDashboardLogic() {
   };
 
   // --- COMPUTED PROPERTIES ---
+  const avatar = computed(() => user.value.avatar);
+
   // Always use normalized dates
   const normalizedEvents = computed(() =>
     store.events.map((e) => ({
@@ -105,6 +110,7 @@ export function useDashboardLogic() {
   return {
     firstName,
     lastName,
+    avatar,
     displayedFolders,
     plannerFolders,
     selectedFolderId,
