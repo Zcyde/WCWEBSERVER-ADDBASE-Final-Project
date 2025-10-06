@@ -56,7 +56,7 @@
         @click="openActionModal(plan)" >
         <div class="flex justify-between items-center">
           <p class="text-lg font-semibold">{{ plan.title }}</p>
-        ono text-gray-600">{{ plan.date }}</span>
+        <span class="text-sm font-mono text-gray-600">{{ plan.date }}</span>
         </div>
         <div class="flex justify-between items-center text-sm mt-1 text-gray-600">
           <span>{{ plan.time }}</span>
