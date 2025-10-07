@@ -2,14 +2,15 @@
   <div class="flex-1 p-10 flex flex-col items-center bg-white">
     <div class="mb-10">
       <h1
-        class="py-2 px-8 rounded-full border-2 border-black-600 font-sans text-xl font-bold text-black-800 bg-gradient-to-b from-gray-300 to-gray-400 shadow-md"
+        class="py-2 px-8 border-2 border-black-600 font-sans text-xl font-bold text-black-800 bg-gradient-to-b from-gray-300 to-gray-400 shadow-md"
       >User Profile</h1>
     </div>
 
     <div class="w-full max-w-5xl flex flex-col lg:flex-row gap-6">
       <div
-        class="hidden lg:flex flex-1 flex-col items-center justify-center relative text-white bg-[#1E293B] rounded-2xl p-6 shadow-md"
+        class="hidden lg:flex flex-1 flex-col items-center justify-center relative text-white bg-[#1E293B] p-6 shadow-md"
       >
+        <!-- Profile Image (Circle) -->
         <div class="relative w-32 h-32">
           <div class="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-white">
             <img :src="user.avatar" alt="User Photo" class="w-full h-full object-cover" />
@@ -33,9 +34,10 @@
       </div>
 
       <form
-        class="flex-1 space-y-5 bg-white shadow-md rounded-2xl p-6 lg:shadow-none lg:bg-transparent lg:p-0"
+        class="flex-1 space-y-5 bg-white shadow-md p-6 lg:shadow-none lg:bg-transparent lg:p-0"
         @submit.prevent="updateUser"
       >
+        <!-- Mobile Profile -->
         <div class="flex flex-col items-center lg:hidden">
           <div class="relative w-24 h-24">
             <div class="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-[#1E293B]">
@@ -57,10 +59,11 @@
           <p class="text-sm text-[#1E3A8A]">{{ user.email }}</p>
         </div>
 
+        <!-- Editable Fields -->
         <div>
           <label class="block text-gray-500 text-sm mb-1">Username</label>
           <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editUsername ? 'border' : 'border-0']"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editUsername ? 'border' : 'border-0']"
           >
             <input
               v-model="user.username"
@@ -81,7 +84,7 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Contact No.</label>
           <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editContact ? 'border' : 'border-0']"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editContact ? 'border' : 'border-0']"
           >
             <input
               v-model="user.contact"
@@ -102,7 +105,7 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Gender</label>
           <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editGender ? 'border' : 'border-0']"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editGender ? 'border' : 'border-0']"
           >
             <input
               v-model="user.gender"
@@ -123,7 +126,7 @@
         <div>
           <label class="block text-gray-500 text-sm mb-1">Address</label>
           <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition rounded-lg', editAddress ? 'border' : 'border-0']"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editAddress ? 'border' : 'border-0']"
           >
             <input
               v-model="user.address"
@@ -141,10 +144,11 @@
           </div>
         </div>
 
+        <!-- Submit -->
         <div class="pt-4">
           <button
             type="submit"
-            class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 rounded-lg shadow-md"
+            class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 shadow-md"
           >Update Profile</button>
         </div>
       </form>

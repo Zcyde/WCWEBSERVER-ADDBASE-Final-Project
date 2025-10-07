@@ -9,7 +9,7 @@
       <!-- Folder Icon/Card -->
       <div
         :class="[folder.color]"
-        class="w-32 h-24 rounded-xl shadow-lg flex items-center justify-center text-white text-lg font-bold p-3 text-center transition-all group-hover:shadow-2xl group-hover:ring-4 ring-offset-2 ring-opacity-50"
+        class="w-32 h-24 rounded-none shadow-lg flex items-center justify-center text-white text-lg font-bold p-3 text-center transition-all group-hover:shadow-2xl group-hover:ring-4 ring-offset-2 ring-opacity-50"
       >
         <!-- Icon Placeholder -->
         <svg

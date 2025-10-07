@@ -1,14 +1,17 @@
 <template>
   <div class="flex-1 p-3 sm:p-6 relative bg-white min-h-screen">
+    <!-- Header -->
     <div
-      class="relative z-10 p-2 sm:p-4 mb-4 sm:mb-8 bg-gray-300 rounded-full border-2 border-black shadow-md"
+      class="relative z-10 p-2 sm:p-4 mb-4 sm:mb-8 bg-gray-300 border-2 border-black shadow-md"
     >
       <h1 class="text-lg sm:text-2xl font-bold text-center text-gray-900">Dashboard</h1>
     </div>
 
+    <!-- Welcome / Planners Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <!-- User Info -->
       <div
-        class="bg-white p-3 sm:p-4 rounded-lg shadow-md flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 space-y-2 sm:space-y-0 col-span-1"
+        class="bg-white p-3 sm:p-4 shadow-md flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 space-y-2 sm:space-y-0 col-span-1"
       >
         <div
           class="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-gray-200"
@@ -21,79 +24,98 @@
         </div>
       </div>
 
-      <div class="bg-white p-3 sm:p-4 rounded-lg shadow-md col-span-2">
-        <h2
-          class="text-base sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-700 border-b pb-1 sm:pb-2"
-        >Planners</h2>
+      <!-- Planners Section -->
+      <div class="bg-white p-3 sm:p-4 shadow-md col-span-2">
+        <h2 class="text-base sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-700 border-b pb-1 sm:pb-2">
+          Planners
+        </h2>
         <div v-if="displayedFolders.length" class="flex flex-wrap gap-2 sm:gap-4">
           <div
             v-for="folder in displayedFolders"
             :key="folder.id"
-            class="flex flex-col items-center p-2 rounded-lg cursor-pointer transition transform hover:scale-105 w-16 sm:w-20"
+            class="flex flex-col items-center p-2 cursor-pointer transition transform hover:scale-105 w-16 sm:w-20"
             @click="selectFolder(folder.id)"
-            :class="{ 'border-2 border-indigo-600 shadow-xl': folder.id === selectedFolderId, 'opacity-70 hover:opacity-100': folder.id !== selectedFolderId }"
+            :class="{
+              'border-2 border-indigo-600 shadow-xl': folder.id === selectedFolderId,
+              'opacity-70 hover:opacity-100': folder.id !== selectedFolderId
+            }"
           >
             <div
               :class="[folder.color]"
-              class="w-10 h-8 sm:w-16 sm:h-14 rounded-md shadow-lg flex items-center justify-center text-white text-sm sm:text-xl font-extrabold"
-            >{{ folder.name.substring(0, 1) }}</div>
+              class="w-10 h-8 sm:w-16 sm:h-14 shadow-lg flex items-center justify-center text-white text-sm sm:text-xl font-extrabold"
+            >
+              {{ folder.name.substring(0, 1) }}
+            </div>
             <span
               class="mt-1 sm:mt-2 text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[3rem] sm:max-w-[4rem]"
-            >{{ folder.name }}</span>
+            >
+              {{ folder.name }}
+            </span>
           </div>
           <p
             v-if="displayedFolders.length < plannerFolders.length"
             class="text-xs sm:text-sm mt-2 sm:mt-4 text-gray-500"
-          >+ {{ plannerFolders.length - displayedFolders.length }} more...</p>
+          >
+            + {{ plannerFolders.length - displayedFolders.length }} more...
+          </p>
         </div>
         <p v-else class="text-gray-500 text-sm py-3 sm:py-4">No planners created yet.</p>
       </div>
     </div>
 
-    <div class="bg-white p-3 sm:p-6 rounded-lg shadow-xl mb-6 sm:mb-8">
-      <h2
-        class="text-lg sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2"
-      >{{ activeTaskTitle }}</h2>
+    <!-- Active Tasks -->
+    <div class="bg-white p-3 sm:p-6 shadow-xl mb-6 sm:mb-8">
+      <h2 class="text-lg sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2">
+        {{ activeTaskTitle }}
+      </h2>
 
       <div v-if="activeTasks.length" class="space-y-2 sm:space-y-3">
         <div
           v-for="plan in activeTasks"
           :key="plan.id"
-          class="bg-gray-50 p-2 sm:p-3 rounded-lg shadow-sm border-l-4 transition hover:shadow-md flex justify-between items-center"
+          class="bg-gray-50 p-2 sm:p-3 shadow-sm border-l-4 transition hover:shadow-md flex justify-between items-center"
           :class="[plan.color.replace('bg-', 'border-')]"
         >
-          <p
-            class="text-sm sm:text-lg font-semibold text-gray-700 truncate mr-2 sm:mr-4"
-          >{{ plan.title }}</p>
+          <p class="text-sm sm:text-lg font-semibold text-gray-700 truncate mr-2 sm:mr-4">
+            {{ plan.title }}
+          </p>
           <div class="flex-shrink-0 flex items-center space-x-1 sm:space-x-3">
             <span
-              class="text-xs sm:text-sm font-medium text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full"
-            >{{ plan.date }}</span>
+              class="text-xs sm:text-sm font-medium text-gray-500 bg-gray-200 px-2 py-0.5"
+            >
+              {{ plan.date }}
+            </span>
             <span
               v-if="plan.time"
               class="text-xs sm:text-sm font-mono text-gray-500"
-            >{{ plan.time }}</span>
+            >
+              {{ plan.time }}
+            </span>
           </div>
         </div>
       </div>
+
       <div
         v-else
-        class="text-center py-4 sm:py-6 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200"
+        class="text-center py-4 sm:py-6 text-gray-500 bg-gray-50 border-2 border-dashed border-gray-200"
       >
-        <p>{{ selectedFolderId ? 'This planner has no tasks scheduled.' : 'You have no upcoming tasks scheduled.' }}</p>
+        <p>
+          {{ selectedFolderId ? 'This planner has no tasks scheduled.' : 'You have no upcoming tasks scheduled.' }}
+        </p>
       </div>
     </div>
 
-    <div class="bg-white p-3 sm:p-4 rounded-lg shadow-xl">
-      <h2
-        class="text-base sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2"
-      >Weekly Schedule Overview</h2>
+    <!-- Weekly Overview -->
+    <div class="bg-white p-3 sm:p-4 shadow-xl">
+      <h2 class="text-base sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2">
+        Weekly Schedule Overview
+      </h2>
 
       <div class="flex flex-col sm:grid sm:grid-cols-7 gap-2 font-semibold">
         <div
           v-for="day in weeklyTaskSummary"
           :key="day.date"
-          class="rounded-lg overflow-hidden shadow-md"
+          class="overflow-hidden shadow-md"
         >
           <div
             class="p-2 text-center text-xs sm:text-sm"
@@ -111,10 +133,12 @@
               <span
                 class="text-sm sm:text-2xl font-extrabold"
                 :class="[day.isToday ? 'text-indigo-700' : 'text-green-600']"
-              >{{ day.tasks.length }}</span>
-              <p
-                class="text-[0.65rem] sm:text-xs text-gray-500"
-              >{{ day.tasks.length === 1 ? 'task' : 'tasks' }}</p>
+              >
+                {{ day.tasks.length }}
+              </span>
+              <p class="text-[0.65rem] sm:text-xs text-gray-500">
+                {{ day.tasks.length === 1 ? 'task' : 'tasks' }}
+              </p>
             </div>
             <div v-else class="text-[0.65rem] sm:text-xs text-gray-400 italic">Free</div>
           </div>
@@ -122,6 +146,7 @@
       </div>
     </div>
 
+    <!-- Watermark -->
     <div
       class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none opacity-10 z-0"
     >
