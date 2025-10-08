@@ -5,11 +5,11 @@
       <div
         class="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 mb-6 border-b border-black-400 gap-3"
       >
-        <!-- Month Navigation -->
+        <!-- Month/Week Navigation -->
         <div class="flex items-center justify-center sm:justify-start space-x-4">
           <button
             class="text-3xl font-bold text-black-700 hover:text-blue-600 transition-colors p-2"
-            @click="previousMonth"
+            @click="goPrevious"
           >
             &lt;
           </button>
@@ -22,85 +22,83 @@
 
           <button
             class="text-3xl font-bold text-black-700 hover:text-blue-600 transition-colors p-2"
-            @click="nextMonth"
+            @click="goNext"
           >
             &gt;
           </button>
         </div>
 
-        <!-- Add Event Button -->
-        <button
-          class="py-1 px-4 text-sm font-medium bg-gradient-to-b from-gray-100 to-gray-300 border border-black-500 shadow-md text-black-700 hover:shadow-lg self-center sm:self-auto"
-          @click="showAddEventModal = true"
-        >
-          + add event
-        </button>
+        <!-- View Toggle + Add Event -->
+        <div class="flex gap-2">
+          <button
+            class="py-1 px-4 text-sm font-medium bg-gray-200 border border-black-500 shadow-md hover:shadow-lg"
+            @click="toggleView"
+          >
+            {{ currentView === 'monthly' ? 'Weekly View' : 'Monthly View' }}
+          </button>
+
+          <button
+            class="py-1 px-4 text-sm font-medium bg-gradient-to-b from-gray-100 to-gray-300 border border-black-500 shadow-md text-black-700 hover:shadow-lg"
+            @click="showAddEventModal = true"
+          >
+            + add event
+          </button>
+        </div>
       </div>
 
-      <!-- MOBILE VIEW -->
-      <div class="sm:hidden">
-        <!-- Day Names -->
+      <!-- ================== CALENDAR SECTION ================== -->
+      <!-- Weekly View -->
+      <div v-if="currentView === 'weekly'" class="overflow-x-auto">
         <div
-          class="grid grid-cols-7 gap-1 bg-[#192E47] p-1 font-bold text-center text-xs"
+          class="grid grid-cols-7 gap-1 bg-[#192E47] p-2 font-bold text-center text-sm min-w-[700px]"
         >
           <div
             v-for="dayName in dayNames"
-            :key="'mobile-dayName-' + dayName"
-            class="col-span-1 bg-[#4C8BF5] text-white py-2 border-[#8192A9]"
+            :key="'week-dayname-' + dayName"
+            class="col-span-1 bg-[#4C8BF5] text-white font-normal py-4 px-2 border-[#8192A9]"
           >
             {{ dayName }}
           </div>
         </div>
 
-        <!-- Days Grid -->
-        <div class="grid grid-cols-7 gap-1 text-xs">
+        <div class="grid grid-cols-7 gap-1 min-w-[700px]">
           <div
             v-for="(day, index) in calendarDays"
-            :key="'mobile-day-' + index"
-            class="h-14 flex items-center justify-center border border-[#8192A9] relative cursor-pointer"
+            :key="'week-day-' + index"
             :class="{
-              'bg-gray-100 opacity-70': !day.isCurrentMonth,
-              'bg-white': day.isCurrentMonth,
-              'border-2': selectedDay && selectedDay.dayOfMonth === day.dayOfMonth && selectedDay.isCurrentMonth === day.isCurrentMonth
+              'bg-white border-b border-l border-[#8192A9]': day.isCurrentMonth,
+              'bg-gray-100 border-b border-l border-[#8192A9] opacity-70': !day.isCurrentMonth,
+              'border-r border-[#8192A9]': (index + 1) % 7 === 0
             }"
-            @click="selectDay(day)"
+            class="col-span-1 h-40 p-1 text-left relative overflow-hidden text-xs"
           >
-            <span
-              class="w-8 h-8 flex items-center justify-center"
+            <div
               :class="{
-                [day.events?.[0]?.color]: selectedDay && selectedDay.dayOfMonth === day.dayOfMonth,
-                'bg-transparent': !(selectedDay && selectedDay.dayOfMonth === day.dayOfMonth)
+                'text-gray-900 font-bold': day.isCurrentMonth,
+                'text-gray-500': !day.isCurrentMonth
               }"
+              class="text-right p-1"
             >
               {{ day.dayOfMonth }}
-            </span>
-          </div>
-        </div>
+            </div>
 
-        <!-- Selected Day Events -->
-        <div v-if="selectedDay" class="mt-4 border-t pt-4">
-          <h3 class="font-bold text-gray-800 mb-2">
-            Events on {{ selectedDay.dayOfMonth }}
-          </h3>
-
-          <div v-if="selectedDay.events && selectedDay.events.length" class="space-y-2">
-            <div
-              v-for="event in selectedDay.events"
-              :key="'mobile-event-' + event.id"
-              :class="[event.color]"
-              class="px-3 py-2 text-white text-sm shadow-md"
-            >
-              {{ event.title }}
+            <div v-if="day.events && day.events.length" class="space-y-0.5">
+              <div
+                v-for="event in day.events"
+                :key="'week-event-' + event.id"
+                :class="[event.color, 'shadow-md']"
+                class="w-full text-white text-xs px-1 py-0.5 truncate cursor-pointer hover:opacity-90 transition-opacity"
+                :title="event.title"
+              >
+                {{ event.title }}
+              </div>
             </div>
           </div>
-
-          <div v-else class="text-sm text-gray-500">No events for this day</div>
         </div>
       </div>
 
-      <!-- DESKTOP VIEW -->
-      <div class="hidden sm:block overflow-x-auto">
-        <!-- Day Names -->
+      <!-- Monthly View (original desktop layout) -->
+      <div v-else class="hidden sm:block overflow-x-auto">
         <div
           class="grid grid-cols-7 gap-1 bg-[#192E47] p-2 font-bold text-center text-sm min-w-[700px]"
         >
@@ -113,7 +111,6 @@
           </div>
         </div>
 
-        <!-- Calendar Days -->
         <div class="grid grid-cols-7 gap-1 min-w-[700px]">
           <div
             v-for="(day, index) in calendarDays"
@@ -173,13 +170,9 @@ const {
   showAddEventModal,
   currentMonthYearDisplay,
   calendarDays,
-  nextMonth,
-  previousMonth,
+  toggleView,
+  goNext,
+  goPrevious,
+  currentView,
 } = useScheduleLogic();
-
-const selectedDay = ref(null);
-
-const selectDay = (day) => {
-  selectedDay.value = day;
-};
 </script>
