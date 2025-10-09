@@ -6,7 +6,7 @@
         <img src="../blueBg.jfif" alt="Background" class="w-full h-full object-cover" />
 
         <!-- LOGIN FORM -->
-        <div class="absolute inset-0 flex items-center justify-center md:justify-start">
+        <div class="absolute inset-0 flex items-center justify-center md:justify-start md:pl-25">
           <div class="bg-[#dcebf5]/95 p-8 rounded-lg shadow-xl w-[90%] max-w-[580px] mx-auto md:ml-[8%] text-center">
 
             <!-- Logo -->

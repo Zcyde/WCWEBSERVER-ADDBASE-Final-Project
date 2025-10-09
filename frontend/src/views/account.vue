@@ -60,6 +60,7 @@
         </div>
 
         <!-- Editable Fields -->
+        <!-- Username -->
         <div>
           <label class="block text-gray-500 text-sm mb-1">Username</label>
           <div
@@ -81,64 +82,23 @@
           </div>
         </div>
 
+        <!-- Email -->
         <div>
-          <label class="block text-gray-500 text-sm mb-1">Contact No.</label>
+          <label class="block text-gray-500 text-sm mb-1">Email</label>
           <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editContact ? 'border' : 'border-0']"
+            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editEmail ? 'border' : 'border-0']"
           >
             <input
-              v-model="user.contact"
+              v-model="user.email"
               type="text"
-              :disabled="!editContact"
+              :disabled="!editEmail"
               @keyup.enter="updateUser"
-              placeholder="09123456789"
+              placeholder="your@email.com"
               class="flex-1 bg-transparent focus:outline-none text-gray-700"
             />
             <button
               type="button"
-              @click="editContact = !editContact"
-              class="ml-2 text-gray-500 hover:text-gray-700"
-            >✎</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-gray-500 text-sm mb-1">Gender</label>
-          <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editGender ? 'border' : 'border-0']"
-          >
-            <input
-              v-model="user.gender"
-              type="text"
-              :disabled="!editGender"
-              @keyup.enter="updateUser"
-              placeholder="Male"
-              class="flex-1 bg-transparent focus:outline-none text-gray-700"
-            />
-            <button
-              type="button"
-              @click="editGender = !editGender"
-              class="ml-2 text-gray-500 hover:text-gray-700"
-            >✎</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-gray-500 text-sm mb-1">Address</label>
-          <div
-            :class="['flex items-center px-3 py-2 shadow-sm bg-gray-50 hover:bg-white transition', editAddress ? 'border' : 'border-0']"
-          >
-            <input
-              v-model="user.address"
-              type="text"
-              :disabled="!editAddress"
-              @keyup.enter="updateUser"
-              placeholder="123 Anywhere St."
-              class="flex-1 bg-transparent focus:outline-none text-gray-700"
-            />
-            <button
-              type="button"
-              @click="editAddress = !editAddress"
+              @click="editEmail = !editEmail"
               class="ml-2 text-gray-500 hover:text-gray-700"
             >✎</button>
           </div>
@@ -167,9 +127,7 @@ onMounted(() => {
 });
 
 const editUsername = ref(false);
-const editContact = ref(false);
-const editGender = ref(false);
-const editAddress = ref(false);
+const editEmail = ref(false);
 
 function handleProfileImageUpload(event) {
   const file = event.target.files[0];

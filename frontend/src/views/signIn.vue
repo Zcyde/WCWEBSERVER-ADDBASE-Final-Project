@@ -11,7 +11,7 @@
       <img src="../blueBg.jfif" alt="Laptop" class="w-full h-full object-cover" />
 
       <!-- Sign up form -->
-       <div class="absolute inset-0 flex items-center justify-center md:justify-end md:pr-12">
+       <div class="absolute inset-0 flex items-center justify-center md:justify-end md:pr-50">
       <div class="bg-[#dcebf5]/95 p-6 md:p-8 rounded-lg shadow-xl w-[90%] md:w-[580px] text-center">
           
           <!-- Logo -->
@@ -31,30 +31,8 @@
                 class="w-1/2 px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] focus:outline-none focus:ring-2 focus:ring-blue-400" />
             </div>
 
-            <!-- Gender & Contact -->
-            <div class="flex gap-4">
-              <select v-model="gender"
-                class="w-1/2 px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="" disabled selected>Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-
-              <input
-                type="text" v-model="contactNumber" placeholder="Contact Number"
-                inputmode="numeric"
-                class="w-1/2 px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] focus:outline-none focus:ring-2 focus:ring-blue-400"
-                @input="sanitizeNumber"
-              />
-            </div>
-
             <!-- Email -->
             <input type="text" v-model="email" placeholder="example@mail.com"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] focus:outline-none focus:ring-2 focus:ring-blue-400" />
-
-            <!-- Address -->
-            <input type="text" v-model="address" placeholder="Address"
               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f2f5e8] focus:outline-none focus:ring-2 focus:ring-blue-400" />
 
             <!-- Date of Birth & Username -->

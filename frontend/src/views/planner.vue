@@ -11,7 +11,7 @@
       <button
         v-if="!selectedFolder"
         @click="showAddFolderModal = true"
-        class="absolute right-0 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-none text-sm sm:text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-md text-white hover:shadow-lg hover:from-blue-500 transition-all"
+        class="absolute right-35 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-none text-sm sm:text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-md text-white hover:shadow-lg hover:from-blue-500 transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +25,25 @@
         </svg>
         Add
       </button>
+
+        <!-- Delete Planner Button -->
+        <button
+          v-if="!selectedFolder"
+          @click="handleDelete"
+          class="absolute right-0 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-none text-sm sm:text-base font-medium bg-gradient-to-b from-red-400 to-red-600 border border-red-700 shadow-md text-white hover:shadow-lg hover:from-red-500 transition-all"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 inline mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Delete
+        </button>
     </div>
 
     <!-- Main Content Area -->
