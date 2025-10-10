@@ -126,5 +126,40 @@ export const store = reactive({
             this.folders.push(newFolder);
             localStorage.setItem('folders', JSON.stringify(this.folders));
         }
-    }
+    },
+    /**
+     * Deletes a folder and all associated events/plans.
+     * @param {string} folderId The unique ID of the folder to delete.
+     */
+    /**
+     * Deletes a folder and all associated events/plans.
+     * @param {string} folderId The unique ID of the folder to delete.
+     */
+    async deleteFolder(folderId) {
+        if (!localStorage.getItem('authToken')) {
+            console.warn("Skipping deleteFolder: User is not authenticated.");
+            // Fallback to local storage logic for unauthenticated users
+            this.folders = this.folders.filter(f => f._id !== folderId);
+            this.events = this.events.filter(e => e.folderId !== folderId);
+            localStorage.setItem('folders', JSON.stringify(this.folders));
+            localStorage.setItem('events', JSON.stringify(this.events));
+            return;
+        }
+
+        try {
+            // 1. Send delete request for the folder. (Backend must handle cascading event delete)
+            await api.delete(`/folders/${folderId}`);
+
+            // 2. Update local state: remove the folder
+            this.folders = this.folders.filter(f => f._id !== folderId);
+
+            // 3. Update local state: remove all associated events
+            this.events = this.events.filter(e => e.folderId !== folderId);
+
+            console.log(`Successfully deleted folder ${folderId} and its plans from backend.`);
+        } catch (error) {
+            console.error(`Failed to delete folder ${folderId}:`, error);
+            throw new Error("Failed to delete the planner folder and its content on the server.");
+        }
+    },
 });

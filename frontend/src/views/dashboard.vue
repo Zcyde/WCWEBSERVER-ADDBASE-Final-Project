@@ -34,7 +34,7 @@
             v-for="folder in displayedFolders"
             :key="folder.id"
             class="flex flex-col items-center p-2 cursor-pointer transition transform hover:scale-105 w-16 sm:w-20"
-            @click="selectFolder(folder.id)"
+            @click="selectFolder(folder._id)"
             :class="{
               'border-2 border-indigo-600 shadow-xl': folder.id === selectedFolderId,
               'opacity-70 hover:opacity-100': folder.id !== selectedFolderId

@@ -37,11 +37,13 @@ export function useDashboardLogic() {
   const displayedFolders = computed(() => plannerFolders.value.slice(0, 4));
 
   const plansInSelectedFolder = computed(() => {
-    if (!selectedFolderId.value) return [];
-    return normalizedEvents.value
-      .filter((event) => event.folderId === selectedFolderId.value)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
-  });
+  if (!selectedFolderId.value) return [];
+
+  // handle both string/ObjectId comparisons
+  return normalizedEvents.value
+    .filter((event) => String(event.plannerId || event.folderId) === String(selectedFolderId.value))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+});
 
   const upcomingPlans = computed(() => {
     const todayStr = formatDate(new Date());
@@ -59,9 +61,13 @@ export function useDashboardLogic() {
   });
 
   const activeTaskTitle = computed(() => {
-    return selectedFolderId.value
-      ? "Tasks in Selected Planner"
-      : "Upcoming Tasks (Next 5)";
+    if (!selectedFolderId.value) return "Upcoming Tasks (Next 5)";
+    const selectedFolder = plannerFolders.value.find(
+      (folder) => folder.id === selectedFolderId.value
+    );
+    return selectedFolder
+      ? `${selectedFolder.name} Tasks`
+      : "Tasks in Selected Planner";
   });
 
   const showTruncation = computed(() => {

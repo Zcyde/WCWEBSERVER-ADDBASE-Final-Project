@@ -95,6 +95,34 @@ export function usePlannerLogic() {
     }
   };
 
+   /**
+ * Deletes a folder (planner) by its ID after user confirmation.
+ * @param {string} folderId The _id of the folder to delete.
+ * @param {string} folderName The name of the folder for the confirmation message.
+ */
+  const deletePlanner = async (folderId, folderName) => {
+      // 1. Final confirmation before deletion
+      if (!confirm(`Are you sure you want to delete the planner: "${folderName}"?\n\nThis action will PERMANENTLY delete the planner and ALL its plans. This action cannot be undone.`)) {
+          return; // User cancelled
+      }
+
+      try {
+          // 2. Call the store to delete the folder and its events
+          await store.deleteFolder(folderId);
+          
+          // Ensure the selectedFolder state is cleared if the deleted one was selected
+          // We use folder._id for MongoDB documents
+          if (selectedFolder.value && selectedFolder.value._id === folderId) {
+              backToList();
+          }
+          
+          alert(`Planner "${folderName}" deleted successfully.`);
+      } catch (error) {
+          console.error("Failed to delete planner:", error);
+          alert(error.message || "Failed to delete the planner. Check console for details.");
+      }
+  };
+
   /**
    * Computed to get events for the selected folder
    */
@@ -118,5 +146,6 @@ export function usePlannerLogic() {
     backToList,
     createFolder,
     createEvent,
+    deletePlanner
   };
 }
