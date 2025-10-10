@@ -65,34 +65,58 @@ export function useAccountLogic() {
   };
 
   const deleteAccount = async () => {
-    // 1. Confirmation
     const isConfirmed = window.confirm(
       "Are you sure you want to permanently delete your account? This action cannot be undone."
     );
 
     if (!isConfirmed) {
-      return; // Stop if the user cancels
+      return; 
     }
 
     try {
-      // 2. API Call to Delete Account
-      // Assuming your DELETE endpoint for the user account is '/user'
       await api.delete('/user'); 
 
-      // 3. Post-Deletion Actions
+      
       alert('Your account has been successfully deleted. Thank you for using DoMore.');
       
-      // Use the existing logout function to clear tokens and redirect to /login
       logout(); 
 
     } catch (error) {
       console.error('Failed to delete account:', error);
-      // Check for a specific error message if possible, otherwise display a generic one
       const errorMessage = error.response?.data?.message || 'Failed to delete account. Please try again.';
       alert(errorMessage);
     }
   };
 
+  /**
+ * Sends a request to the server to change the user's password.
+ * @param {string} currentPassword 
+ * @param {string} newPassword */
+
+  const changePassword = async (currentPassword, newPassword) => {
+  try {
+    if (!currentPassword || !newPassword) {
+      alert("Please enter both your current and new passwords.");
+      return;
+    }
+
+    const payload = {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
+    
+    await api.put('/user/password', payload);
+
+    alert('Password updated successfully! You may need to log in again with your new password.');
+    logout();
+
+  } catch (error) {
+    console.error('Failed to change password:', error);
+    const errorMessage = error.response?.data?.message || 'Failed to change password. Please check your current password.';
+    alert(errorMessage);
+  }
+};
+ 
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
@@ -114,6 +138,7 @@ export function useAccountLogic() {
     updateUser,
     uploadAvatar,
     deleteAccount,
+    changePassword,
     logout
   };
 }

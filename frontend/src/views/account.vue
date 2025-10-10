@@ -112,6 +112,13 @@
           >Update Profile</button>
         </div>
 
+        <!-- Change Password button -->
+        <div class="pt-4">
+          <button
+            type="button" @click="changePassword" class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 shadow-md"
+          >Change password</button>
+        </div>
+
         <!-- Delete Account button -->
         <div class="pt-4 md:pr-80 ">
           <button
