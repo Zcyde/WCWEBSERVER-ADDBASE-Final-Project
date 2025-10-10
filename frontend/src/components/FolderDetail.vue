@@ -50,23 +50,33 @@
     <div v-if="filteredPlans.length" class="space-y-4 mb-10">
       <div
         v-for="plan in filteredPlans"
-        :key="plan.id"
-        class="bg-white p-4 rounded-xl shadow-md border-l-4 cursor-pointer hover:bg-gray-100 transition"
+        :key="plan._id"
+        class="bg-white p-4 rounded-xl shadow-md border-l-4 hover:bg-gray-100 transition flex justify-between items-center"
         :class="[getBorderClass(plan.color)]"
-        @click="openActionModal(plan)" >
-        <div class="flex justify-between items-center">
-          <p class="text-lg font-semibold">{{ plan.title }}</p>
-        <span class="text-sm font-mono text-gray-600">{{ plan.date }}</span>
-        </div>
-        <div class="flex justify-between items-center text-sm mt-1 text-gray-600">
-          <span>{{ plan.time }}</span>
-          <div
-            :class="[plan.color]"
-            class="text-xs text-white px-2 py-0.5 rounded-full font-medium shadow-sm"
-          >
-            {{ plan.type }}
+      >
+        <div class="flex-1 cursor-pointer" @click="openActionModal(plan)">
+          <div class="flex justify-between items-center">
+            <p class="text-lg font-semibold">{{ plan.title }}</p>
+            <span class="text-sm font-mono text-gray-600">{{ plan.date }}</span>
+          </div>
+          <div class="flex justify-between items-center text-sm mt-1 text-gray-600">
+            <span>{{ plan.time }}</span>
+            <div
+              :class="[plan.color]"
+              class="text-xs text-white px-2 py-0.5 rounded-full font-medium shadow-sm"
+            >
+              {{ plan.type }}
+            </div>
           </div>
         </div>
+
+        <!-- 🗑️ Delete button -->
+        <button
+          @click.stop="handleDeleteEvent(plan)"
+          class="ml-4 text-red-600 hover:text-red-800 text-sm font-medium border border-red-400 rounded-lg px-3 py-1 hover:bg-red-50 transition"
+        >
+          Delete
+        </button>
       </div>
     </div>
 
@@ -597,4 +607,12 @@ const resetTimer = (durationKey) => {
   isBreak.value = false;
   pauseTimer();
 };
+
+const handleDeleteEvent = (plan) => {
+  const confirmDelete = confirm(`Are you sure you want to delete "${plan.title}"?`);
+  if (!confirmDelete) return;
+
+  store.deleteEvent(plan._id ?? plan.id);
+};
+
 </script>

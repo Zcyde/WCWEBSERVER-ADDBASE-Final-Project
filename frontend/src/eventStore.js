@@ -146,6 +146,8 @@ export const store = reactive({
             return;
         }
 
+
+
         try {
             // 1. Send delete request for the folder. (Backend must handle cascading event delete)
             await api.delete(`/folders/${folderId}`);
@@ -162,4 +164,34 @@ export const store = reactive({
             throw new Error("Failed to delete the planner folder and its content on the server.");
         }
     },
+
+    async deleteEvent(eventId) {
+        try {
+            // --- Case 1: Authenticated (delete from backend) ---
+            if (localStorage.getItem("authToken")) {
+            await api.delete(`/events/${eventId}`);
+            console.log(`Deleted event ${eventId} from backend`);
+            } else {
+            console.warn("User not authenticated — deleting event locally only.");
+            }
+
+            // --- Case 2: Update local state always ---
+            this.events = this.events.filter(
+            (e) => String(e._id ?? e.id) !== String(eventId)
+            );
+
+            // --- Case 3: Update localStorage for persistence ---
+            localStorage.setItem("events", JSON.stringify(this.events));
+
+            console.log(`Deleted event ${eventId} and updated localStorage`);
+        } catch (error) {
+            console.error("Failed to delete event:", error);
+
+            // Fallback if backend fails → still update localStorage
+            this.events = this.events.filter(
+            (e) => String(e._id ?? e.id) !== String(eventId)
+            );
+            localStorage.setItem("events", JSON.stringify(this.events));
+        }
+    }
 });
