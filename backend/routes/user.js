@@ -106,4 +106,21 @@ router.put('/password', authenticateToken, async (req, res) => {
   }
 });
 
+router.delete('/', authenticateToken, async (req, res) => {
+  try {
+    console.log(`DELETE /api/user - Deleting account for user ${req.userId}`);
+    const user = await User.findById(req.userId);
+    if (!user) {
+      console.log(`User not found: ${req.userId}`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    await User.findByIdAndDelete(req.userId);
+    console.log(`User deleted: ${user.username}`);
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting user:', err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

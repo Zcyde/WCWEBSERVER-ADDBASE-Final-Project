@@ -65,21 +65,24 @@ export function useAccountLogic() {
   };
 
   const deleteAccount = async () => {
+    console.log('Delete account initiated');
     const isConfirmed = window.confirm(
       "Are you sure you want to permanently delete your account? This action cannot be undone."
     );
 
     if (!isConfirmed) {
-      return; 
+      console.log('Delete account cancelled by user');
+      return;
     }
 
     try {
-      await api.delete('/user'); 
+      console.log('Sending delete account request to backend');
+      await api.delete('/user');
+      console.log('Account deleted successfully from backend');
 
-      
       alert('Your account has been successfully deleted. Thank you for using DoMore.');
-      
-      logout(); 
+
+      logout();
 
     } catch (error) {
       console.error('Failed to delete account:', error);
