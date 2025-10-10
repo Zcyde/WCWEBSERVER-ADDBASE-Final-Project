@@ -376,7 +376,7 @@ const breakOptions = {
 /* Computed time display */
 const formattedTime = computed(() => {
   if (!selectedPlan.value) return "--:--";
-  const seconds = timers.value[selectedPlan.value.id];
+  const seconds = timers.value[selectedPlan.value._id];
   if (!seconds && seconds !== 0) return "--:--";
   const m = String(Math.floor(seconds / 60)).padStart(2, "0");
   const s = String(seconds % 60).padStart(2, "0");
@@ -416,6 +416,7 @@ const closeActionModal = () => {
 
 /* 🔑 NEW: Switches to the file update view */
 const switchToUpdateFiles = () => {
+  clearTimer();
   currentActionView.value = 'file-update';
 };
 
@@ -501,6 +502,7 @@ const switchToTimer = () => {
 
 /* 🔑 NEW: Sets the file and switches to the viewer view */
 const openFileViewer = (file) => {
+    clearTimer();
     selectedFile.value = file;
     currentActionView.value = 'file-viewer';
 };
@@ -521,11 +523,11 @@ const backToSelection = () => {
 
 /* Tick function */
 const tick = () => {
-  const id = selectedPlan.value?.id;
+  const id = selectedPlan.value?._id;
   if (!id) return; // Ensure that we have an id to work with
-  
+
   const current = timers.value[id];
-  
+
   if (current > 0) {
     timers.value[id] = current - 1; // Decrease timer by 1 second
   } else {
@@ -538,11 +540,12 @@ const tick = () => {
       isBreak.value = true;
       startTimer();  // Restart the timer for the break
 
-      alert("Study time finished! Break starts now.");
+      console.log("Study time finished! Break starts now.");
     } else {
-      alert("Break finished! Timer stopped.");
+      console.log("Break finished! Timer stopped.");
       isBreak.value = false;
       timers.value[id] = 0;  // Reset the timer to 0 after break
+      currentActionView.value = 'selection';
     }
   }
 };
@@ -551,12 +554,12 @@ const tick = () => {
 /* Start Timer */
 const startTimer = () => {
   if (!selectedPlan.value) return;  // Ensure a plan is selected
-  
-  const id = selectedPlan.value.id;
-  
+
+  const id = selectedPlan.value._id;
+
   // Ensure a valid timer duration is selected and timer hasn't started yet
   if (timers.value[id] === undefined || !selectedDurationKey.value) {
-    alert("Select a duration first!");
+    console.log("Select a duration first!");
     return;
   }
 
@@ -577,7 +580,8 @@ const pauseTimer = () => {
 /* Clear Timer */
 const clearTimer = () => {
   if (!selectedPlan.value) return;
-  const id = selectedPlan.value.id;
+  if (!confirm("Are you sure you want to reset the timer?")) return;
+  const id = selectedPlan.value._id;
   timers.value[id] = null;
   isBreak.value = false;
   selectedDurationKey.value = null;
@@ -587,7 +591,7 @@ const clearTimer = () => {
 /* Reset Timer (sets new duration) */
 const resetTimer = (durationKey) => {
   if (!selectedPlan.value) return;
-  const id = selectedPlan.value.id;
+  const id = selectedPlan.value._id;
   timers.value[id] = studyOptions[durationKey];
   selectedDurationKey.value = durationKey;
   isBreak.value = false;
