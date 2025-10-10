@@ -104,12 +104,20 @@
           </div>
         </div>
 
-        <!-- Submit -->
+        <!-- Update button -->
         <div class="pt-4">
           <button
             type="submit"
             class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 shadow-md"
           >Update Profile</button>
+        </div>
+
+        <!-- Delete Account button -->
+        <div class="pt-4 md:pr-80 ">
+          <button
+            type="submit"
+            class="w-full bg-red-600 hover:shadow-lg hover:from-red-500 transition-all text-white font-semibold py-2 shadow-md "
+          >Delete Account</button>
         </div>
       </form>
     </div>
