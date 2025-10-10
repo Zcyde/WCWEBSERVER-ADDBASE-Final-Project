@@ -416,7 +416,7 @@ const closeActionModal = () => {
 
 /* 🔑 NEW: Switches to the file update view */
 const switchToUpdateFiles = () => {
-  clearTimer();
+  clearTimer(false);
   currentActionView.value = 'file-update';
 };
 
@@ -502,7 +502,7 @@ const switchToTimer = () => {
 
 /* 🔑 NEW: Sets the file and switches to the viewer view */
 const openFileViewer = (file) => {
-    clearTimer();
+    clearTimer(false);
     selectedFile.value = file;
     currentActionView.value = 'file-viewer';
 };
@@ -511,7 +511,7 @@ const openFileViewer = (file) => {
 const backToSelection = () => {
     // Clear timer state if going back from timer view
     if (currentActionView.value === 'timer') {
-      clearTimer();
+      clearTimer(false);
     }
     // Clear file update state if going back from update view
     filesToUpload.value = [];
@@ -578,9 +578,9 @@ const pauseTimer = () => {
 };
 
 /* Clear Timer */
-const clearTimer = () => {
+const clearTimer = (showConfirm = true) => {
   if (!selectedPlan.value) return;
-  if (!confirm("Are you sure you want to reset the timer?")) return;
+  if (showConfirm && !confirm("Are you sure you want to reset the timer?")) return;
   const id = selectedPlan.value._id;
   timers.value[id] = null;
   isBreak.value = false;

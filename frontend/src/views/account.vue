@@ -115,7 +115,7 @@
         <!-- Change Password button -->
         <div class="pt-4">
           <button
-            type="button" @click="changePassword" class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 shadow-md"
+            type="button" @click="showChangePasswordModal = true" class="w-full bg-[#1E293B] hover:bg-[#162032] transition text-white font-semibold py-2 shadow-md"
           >Change password</button>
         </div>
 
@@ -127,6 +127,63 @@
         </div>
       </form>
     </div>
+
+    <!-- Change Password Modal -->
+    <div
+      v-if="showChangePasswordModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        <button
+          @click="showChangePasswordModal = false"
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl leading-none"
+          aria-label="Close"
+          title="Close"
+        >
+          ✕
+        </button>
+
+        <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">Change Password</h3>
+
+        <form @submit.prevent="handleChangePassword" class="space-y-4">
+          <div>
+            <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <input
+              id="currentPassword"
+              v-model="currentPassword"
+              type="password"
+              required
+              class="w-full p-3 border border-gray-300 rounded-none shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <input
+              id="newPassword"
+              v-model="newPassword"
+              type="password"
+              required
+              class="w-full p-3 border border-gray-300 rounded-none shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div class="flex justify-end space-x-4 pt-4">
+            <button
+              type="button"
+              @click="showChangePasswordModal = false"
+              class="py-3 px-6 border border-gray-300 rounded-none shadow-sm text-base font-medium text-gray-700 hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="py-3 px-6 border border-transparent rounded-none shadow-md text-base font-medium text-white bg-green-600 hover:bg-green-700 transition"
+            >
+              Change Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -134,7 +191,7 @@
 import { ref, onMounted } from "vue";
 import { useAccountLogic } from "../composables/useAccountLogic.js";
 
-const { user, loadUser, uploadAvatar, updateUser, deleteAccount } = useAccountLogic();
+const { user, loadUser, uploadAvatar, updateUser, deleteAccount, changePassword } = useAccountLogic();
 
 onMounted(() => {
   loadUser();
@@ -142,6 +199,21 @@ onMounted(() => {
 
 const editUsername = ref(false);
 const editEmail = ref(false);
+const showChangePasswordModal = ref(false);
+const currentPassword = ref('');
+const newPassword = ref('');
+
+const handleChangePassword = async () => {
+  try {
+    await changePassword(currentPassword.value, newPassword.value);
+    showChangePasswordModal.value = false;
+    currentPassword.value = '';
+    newPassword.value = '';
+  } catch (error) {
+    // Error handling is already in changePassword
+    console.error('Password change failed:', error);
+  }
+};
 
 function handleProfileImageUpload(event) {
   const file = event.target.files[0];
