@@ -115,8 +115,7 @@
         <!-- Delete Account button -->
         <div class="pt-4 md:pr-80 ">
           <button
-            type="submit"
-            class="w-full bg-red-600 hover:shadow-lg hover:from-red-500 transition-all text-white font-semibold py-2 shadow-md "
+            type="button" @click="deleteAccount" class="w-full bg-red-600 hover:shadow-lg hover:from-red-500 transition-all text-white font-semibold py-2 shadow-md "
           >Delete Account</button>
         </div>
       </form>
@@ -128,7 +127,7 @@
 import { ref, onMounted } from "vue";
 import { useAccountLogic } from "../composables/useAccountLogic.js";
 
-const { user, loadUser, uploadAvatar, updateUser } = useAccountLogic();
+const { user, loadUser, uploadAvatar, updateUser, deleteAccount } = useAccountLogic();
 
 onMounted(() => {
   loadUser();
