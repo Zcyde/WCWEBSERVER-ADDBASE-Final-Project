@@ -1,35 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
+const File = require('../models/File');
 const authenticateToken = require('../middleware/auth');
 const { upload } = require('../config/multer');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
-// Events API
+// GET all events
 router.get('/', authenticateToken, async (req, res) => {
   try {
     console.log(`GET /api/events - Fetching events for user ${req.userId}`);
     const folderId = req.query.folderId;
     let query = { userId: req.userId };
-    if (folderId) {
-      query.folderId = folderId;
-    }
+    if (folderId) query.folderId = folderId;
+
     const events = await Event.find(query).sort({ date: 1 });
     console.log(`Found ${events.length} events`);
-    // Normalize plannerFiles to ensure it's an array of strings
+
     events.forEach(event => {
-      if (!Array.isArray(event.plannerFiles)) {
-        event.plannerFiles = [];
-      } else {
-        event.plannerFiles = event.plannerFiles.filter(item => typeof item === 'string' && item.trim() !== '');
-      }
+      if (!Array.isArray(event.plannerFiles)) event.plannerFiles = [];
+      else event.plannerFiles = event.plannerFiles.filter(f => typeof f === 'string' && f.trim() !== '');
     });
-    // Format date to 'YYYY-MM-DD' for frontend compatibility
+
     const formattedEvents = events.map(event => {
       const obj = event.toObject();
       obj.date = event.date.toISOString().split('T')[0];
       return obj;
     });
+
     res.json(formattedEvents);
   } catch (err) {
     console.error('Error fetching events:', err.message);
@@ -37,13 +36,16 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// POST new event
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const eventData = req.body;
     console.log(`POST /api/events - Creating event: ${eventData.title} for user ${req.userId}`);
+
     if (!eventData.date || !eventData.title) {
       return res.status(400).json({ error: 'Date and title are required' });
     }
+
     const newEvent = new Event({ ...eventData, userId: req.userId });
     await newEvent.save();
     console.log(`Event created with ID: ${newEvent._id}`);
@@ -54,17 +56,14 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+// PUT update event and handle new files
 router.put('/:id', authenticateToken, upload.array('files'), async (req, res) => {
   const id = req.params.id;
   const newFiles = req.files || [];
   let eventData;
 
   try {
-    if (req.body.data) {
-      eventData = JSON.parse(req.body.data);
-    } else {
-      eventData = req.body;
-    }
+    eventData = req.body.data ? JSON.parse(req.body.data) : req.body;
   } catch (e) {
     newFiles.forEach(file => fs.unlinkSync(file.path));
     return res.status(400).json({ error: 'Invalid data format.' });
@@ -73,16 +72,13 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
   try {
     console.log(`PUT /api/events/${id} - Updating event (new files: ${newFiles.length}) for user ${req.userId}`);
 
-    // Prepare new file URLs
+    // Prepare new file URLs for planner
     const newFileUrls = newFiles.map(file => `/uploads/${file.filename}`);
 
     // Combine retained and new files
-    let retainedFiles = eventData.plannerFiles;
-    if (!Array.isArray(retainedFiles)) {
-      retainedFiles = [];
-    } else {
-      retainedFiles = retainedFiles.filter(item => typeof item === 'string' && item.trim() !== '');
-    }
+    let retainedFiles = Array.isArray(eventData.plannerFiles) 
+      ? eventData.plannerFiles.filter(f => typeof f === 'string' && f.trim() !== '')
+      : [];
     const finalPlannerFiles = [...retainedFiles, ...newFileUrls];
 
     // Construct update object
@@ -90,7 +86,7 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
     delete updateObject.id;
     delete updateObject._id;
 
-    // Update
+    // Update the event
     const updatedEvent = await Event.findOneAndUpdate(
       { _id: id, userId: req.userId },
       updateObject,
@@ -100,6 +96,20 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
     if (!updatedEvent) {
       newFiles.forEach(file => fs.unlinkSync(file.path));
       return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // ✅ Save new uploaded files into File collection
+    if (newFiles.length > 0) {
+      const fileDocs = newFiles.map(file => ({
+        name: file.originalname,
+        filename: file.filename,
+        path: `/uploads/${file.filename}`,
+        size: file.size,
+        userId: new mongoose.Types.ObjectId(req.userId) // cast to ObjectId
+      }));
+
+      await File.insertMany(fileDocs);
+      console.log(`Saved ${fileDocs.length} files to File collection`);
     }
 
     console.log(`Event updated: ${updatedEvent._id}. Total files: ${finalPlannerFiles.length}`);
@@ -112,14 +122,14 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
   }
 });
 
+// DELETE an event
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     console.log(`DELETE /api/events/${id} - Deleting event for user ${req.userId}`);
     const deletedEvent = await Event.findOneAndDelete({ _id: id, userId: req.userId });
-    if (!deletedEvent) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
+    if (!deletedEvent) return res.status(404).json({ error: 'Event not found' });
+
     console.log(`Event deleted: ${id}`);
     res.json({ message: 'Event deleted successfully' });
   } catch (err) {

@@ -37,12 +37,12 @@
         </router-link>
 
         <router-link
-          to="/portfolio"
+          to="/library"
           class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
           active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
           <span class="text-xl">📁</span>
-          <span>Portfolio</span>
+          <span>Library</span>
         </router-link>
 
         <div class="pt-6 mt-auto border-t-2 border-gray-500 w-full">
@@ -111,12 +111,12 @@
       </router-link>
 
       <router-link
-        to="/portfolio"
+        to="/library"
         class="flex flex-col items-center p-1 rounded-md text-gray-300 hover:text-indigo-400 transition-colors"
         active-class="text-indigo-400"
       >
         <span class="text-xl">📁</span>
-        <span class="text-xs">Portfolio</span>
+        <span class="text-xs">Library</span>
       </router-link>
     </nav>
   </div>

@@ -8,7 +8,7 @@ import Planner from '../views/planner.vue';
 import Schedule from '../views/schedule.vue';
 import Login from '../views/login.vue';
 import SignIn from '../views/signIn.vue';
-import Portfolio from '../views/portfolio.vue';
+import Library from '../views/library.vue';
 
 const routes = [
   // This is the parent route for the main application layout
@@ -30,11 +30,11 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
-      { path: '', name: 'Dashboard', component: Dashboard, meta: {requiresAuth: true} },
-      { path: 'planner', name: 'Planner', component: Planner, meta: {requiresAuth: true} },
-      { path: 'schedule', name: 'Schedule', component: Schedule, meta: {requiresAuth: true} },
-      { path: 'account', name: 'Account', component: () => import('../views/account.vue'), meta: {requiresAuth: true} }, // Lazy-loaded
-      { path: 'portfolio', name: 'Portfolio', component: Portfolio, meta: {requiresAuth: true} }
+    { path: '', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
+    { path: 'planner', name: 'Planner', component: Planner, meta: { requiresAuth: true } },
+    { path: 'schedule', name: 'Schedule', component: Schedule, meta: { requiresAuth: true } },
+    { path: 'account', name: 'Account', component: () => import('../views/account.vue'), meta: { requiresAuth: true } },
+    { path: 'library', name: 'Library', component: Library, meta: { requiresAuth: true } },
     ]
   }
 ];
