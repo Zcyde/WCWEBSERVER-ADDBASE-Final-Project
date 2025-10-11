@@ -12,7 +12,12 @@ export function useDashboardLogic() {
   const isDataLoaded = ref(false);
 
   // --- HELPERS ---
-  const formatDate = (date) => date.toISOString().split("T")[0];
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   const getDayName = (date) =>
     date.toLocaleDateString("en-US", { weekday: "short" });
 
@@ -80,9 +85,16 @@ export function useDashboardLogic() {
       : 0;
   });
 
+  const getStartOfWeek = (date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - day);
+    return d;
+  };
+
   const weeklyTaskSummary = computed(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const startOfWeek = getStartOfWeek(new Date());
 
     const eventsByDate = normalizedEvents.value.reduce((acc, event) => {
       acc[event.date] = acc[event.date] || [];
@@ -91,15 +103,15 @@ export function useDashboardLogic() {
     }, {});
 
     return Array.from({ length: 7 }).map((_, i) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
       const dateKey = formatDate(date);
 
       return {
         date: dateKey,
         dayOfMonth: date.getDate(),
         dayOfWeek: getDayName(date),
-        isToday: i === 0,
+        isToday: date.toDateString() === new Date().toDateString(),
         tasks: eventsByDate[dateKey] || [],
       };
     });

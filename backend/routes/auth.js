@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
@@ -90,6 +91,32 @@ router.post('/login', async (req, res) => {
     res.json({ user: userWithoutPassword, token });
   } catch (err) {
     console.error('Error during login:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/change-password', async (req, res) => {
+  try {
+    const { username, newPassword } = req.body;
+    console.log(`POST /api/change-password - Request for: ${username}`);
+
+    if (!username || !newPassword) {
+      return res.status(400).json({ error: 'Username and new password are required' });
+    }
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log(`Change password failed: User not found - ${username}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    console.log(`Password changed successfully for user: ${user.username}`);
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error('Error during change password:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

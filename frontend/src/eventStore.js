@@ -165,32 +165,54 @@ export const store = reactive({
         }
     },
 
+    async updateEvent(eventId, eventData) {
+        try {
+            // --- Case 1: Authenticated (update on backend) ---
+            if (localStorage.getItem("authToken")) {
+                await api.put(`/events/${eventId}`, eventData);
+                console.log(`Updated event ${eventId} on backend`);
+            } else {
+                console.warn("User not authenticated — updating event locally only.");
+            }
+
+            // --- Case 2: Update local state ---
+            const index = this.events.findIndex(e => String(e._id ?? e.id) === String(eventId));
+            if (index !== -1) {
+                this.events[index] = { ...this.events[index], ...eventData };
+            }
+
+            // --- Case 3: Update localStorage ---
+            localStorage.setItem("events", JSON.stringify(this.events));
+
+            console.log(`Updated event ${eventId} and updated localStorage`);
+        } catch (error) {
+            console.error("Failed to update event:", error);
+            throw error;
+        }
+    },
+
     async deleteEvent(eventId) {
+        // Optimistic update: Update local state immediately
+        const originalEvents = [...this.events];
+        this.events = this.events.filter(
+            (e) => String(e._id ?? e.id) !== String(eventId)
+        );
+        localStorage.setItem("events", JSON.stringify(this.events));
+
         try {
             // --- Case 1: Authenticated (delete from backend) ---
             if (localStorage.getItem("authToken")) {
-            await api.delete(`/events/${eventId}`);
-            console.log(`Deleted event ${eventId} from backend`);
+                await api.delete(`/events/${eventId}`);
+                console.log(`Deleted event ${eventId} from backend`);
             } else {
-            console.warn("User not authenticated — deleting event locally only.");
+                console.warn("User not authenticated — deleted event locally only.");
             }
-
-            // --- Case 2: Update local state always ---
-            this.events = this.events.filter(
-            (e) => String(e._id ?? e.id) !== String(eventId)
-            );
-
-            // --- Case 3: Update localStorage for persistence ---
-            localStorage.setItem("events", JSON.stringify(this.events));
 
             console.log(`Deleted event ${eventId} and updated localStorage`);
         } catch (error) {
             console.error("Failed to delete event:", error);
-
-            // Fallback if backend fails → still update localStorage
-            this.events = this.events.filter(
-            (e) => String(e._id ?? e.id) !== String(eventId)
-            );
+            // Revert on failure
+            this.events = originalEvents;
             localStorage.setItem("events", JSON.stringify(this.events));
         }
     }

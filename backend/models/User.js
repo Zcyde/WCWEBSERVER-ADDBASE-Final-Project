@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
   address: String,
   birthDate: Date,
   avatar: { type: String, default: 'https://placehold.co/200x200?text=User' },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

@@ -14,7 +14,7 @@ export function usePlannerLogic() {
   // Folder form state
   const newFolder = reactive({
     name: "",
-    color: "bg-gray-400",
+    color: "bg-indigo-500",
   });
 
   // Event form state
@@ -55,7 +55,7 @@ export function usePlannerLogic() {
     try {
       await store.addFolder(newFolder.name.trim(), newFolder.color);
       newFolder.name = "";
-      newFolder.color = "bg-gray-400";
+      newFolder.color = "bg-indigo-500";
       showAddFolderModal.value = false;
     } catch (error) {
       console.error("Failed to create folder:", error);

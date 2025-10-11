@@ -23,13 +23,7 @@ router.get('/', authenticateToken, async (req, res) => {
       else event.plannerFiles = event.plannerFiles.filter(f => typeof f === 'string' && f.trim() !== '');
     });
 
-    const formattedEvents = events.map(event => {
-      const obj = event.toObject();
-      obj.date = event.date.toISOString().split('T')[0];
-      return obj;
-    });
-
-    res.json(formattedEvents);
+    res.json(events);
   } catch (err) {
     console.error('Error fetching events:', err.message);
     res.status(500).json({ error: err.message });

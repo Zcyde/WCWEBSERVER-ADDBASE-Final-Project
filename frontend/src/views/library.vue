@@ -3,7 +3,7 @@
     <!-- HEADER -->
     <div class="flex justify-between items-center border-b pb-4 mb-6 relative z-10">
       <h1
-        class="py-2 px-6 rounded-none border-2 border-black text-xl sm:text-2xl font-bold text-gray-800 bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
+        class="py-2 px-6 rounded-lg border border-gray-300 text-xl font-bold text-gray-800 bg-gray-100 shadow-md"
       >Library</h1>
     </div>
 
@@ -15,10 +15,10 @@
       <div
         v-for="(file, index) in uploadedFiles"
         :key="index"
-        class="flex flex-col items-center text-center bg-gradient-to-b from-gray-100 to-gray-200 border border-gray-300 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-200"
+        class="flex flex-col items-center text-center bg-gray-100 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-200"
       >
         <!-- FILE ICON -->
-        <div class="w-20 h-20 bg-blue-400 rounded-lg shadow-md flex justify-center items-center text-3xl">
+        <div class="w-20 h-20 bg-blue-500 rounded-lg shadow-md flex justify-center items-center text-3xl">
           📄
         </div>
 
@@ -124,7 +124,6 @@ const deleteFile = async (file) => {
     await api.delete(`/files/${file._id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    alert(`Deleted ${file.name}`);
     await loadFiles(); // reload library
     // Optionally, also refresh planner if you have a method to do so
     // await loadPlannerEvents();

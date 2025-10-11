@@ -12,7 +12,6 @@ import {
 
 export function useScheduleLogic() {
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const showAddEventModal = ref(false);
   const currentView = ref("monthly");
 
   const currentMonthYearDisplay = computed(() => getCurrentMonthYearDisplay());
@@ -24,8 +23,9 @@ export function useScheduleLogic() {
         : generateCalendarDays();
 
     const eventsByDate = store.events.reduce((acc, event) => {
-      if (!acc[event.date]) acc[event.date] = [];
-      acc[event.date].push(event);
+      const dateKey = event.date.split("T")[0];
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(event);
       return acc;
     }, {});
 
@@ -62,7 +62,6 @@ export function useScheduleLogic() {
 
   return {
     dayNames,
-    showAddEventModal,
     currentMonthYearDisplay,
     calendarDays,
     toggleView,

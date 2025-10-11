@@ -4,14 +4,14 @@
     <div class="relative mb-6 border-b border-gray-300 pb-3 flex items-center justify-center">
       <!-- Title -->
       <h1
-        class="py-2 px-6 rounded-none border-2 border-black text-xl sm:text-2xl font-bold text-gray-800 bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
+        class="py-2 px-6 rounded-lg border border-gray-300 text-xl font-bold text-gray-800 bg-gray-100 shadow-md"
       >Planner</h1>
 
       <!-- Add Planner Button -->
       <button
         v-if="!selectedFolder"
         @click="showAddFolderModal = true"
-        class="absolute right-10 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-none text-sm sm:text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-md text-white hover:shadow-lg hover:from-blue-500 transition-all"
+        class="absolute right-10 top-1/2 -translate-y-1/2 py-1 px-3 sm:py-1.5 sm:px-4 rounded-lg text-sm sm:text-base font-medium bg-blue-500 border border-blue-600 shadow-md text-white hover:shadow-lg transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +41,10 @@
     <!-- Add Folder Modal -->
     <div
       v-if="showAddFolderModal"
-      class="fixed inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center z-50"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
       @click.self="showAddFolderModal = false"
     >
-      <div class="bg-white p-6 rounded-none shadow-xl w-full max-w-md" @click.stop>
+      <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md" @click.stop>
         <h3 class="text-xl font-bold mb-4 text-gray-800">Create New Planner Folder</h3>
         <form @submit.prevent="createFolder" class="space-y-5">
           <div>
@@ -54,7 +54,7 @@
               v-model="newFolder.name"
               type="text"
               required
-              class="w-full p-3 border border-gray-300 rounded-none shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base mt-1"
+              class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base mt-1"
             />
           </div>
           <div>
@@ -65,25 +65,28 @@
             <select
               id="newFolderColor"
               v-model="newFolder.color"
-              class="w-full p-3 border border-gray-300 rounded-none shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base mt-1"
+              class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base mt-1"
             >
-              <option value="bg-gray-400">Gray (Default)</option>
-              <option value="bg-red-600">Red</option>
-              <option value="bg-blue-600">Blue</option>
-              <option value="bg-indigo-600">Indigo</option>
-              <option value="bg-green-600">Green</option>
-              <option value="bg-purple-600">Purple</option>
+              <option value="bg-indigo-500">Indigo (Default)</option>
+              <option value="bg-gray-500">Gray</option>
+              <option value="bg-red-500">Red</option>
+              <option value="bg-blue-500">Blue</option>
+              <option value="bg-teal-500">Teal</option>
+              <option value="bg-pink-500">Pink</option>
+              <option value="bg-orange-500">Orange</option>
+              <option value="bg-green-500">Green</option>
+              <option value="bg-purple-500">Purple</option>
             </select>
           </div>
           <div class="flex justify-end space-x-4 pt-4">
             <button
               type="button"
               @click="showAddFolderModal = false"
-              class="py-3 px-6 border border-gray-300 rounded-none shadow-sm text-base font-medium text-gray-700 hover:bg-gray-100 transition"
+              class="py-3 px-6 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 hover:bg-gray-100 transition"
             >Cancel</button>
             <button
               type="submit"
-              class="py-3 px-6 border border-transparent rounded-none shadow-md text-base font-medium text-white bg-green-600 hover:bg-green-700 transition"
+              class="py-3 px-6 border border-transparent rounded-lg shadow-md text-base font-medium text-white bg-green-600 hover:bg-green-700 transition"
             >Create Folder</button>
           </div>
         </form>

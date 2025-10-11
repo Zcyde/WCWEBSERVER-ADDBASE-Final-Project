@@ -3,7 +3,7 @@
     <div class="flex items-center space-x-4 mb-8">
       <button
         @click="$emit('back-to-list')"
-        class="p-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+        class="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
         title="Back to all planners"
       >
         <svg
@@ -31,7 +31,7 @@
     <div class="flex justify-end mb-6">
       <button
         @click="showModal = true"
-        class="py-3 px-6 rounded-full text-base font-medium bg-gradient-to-b from-blue-400 to-blue-600 border border-blue-700 shadow-lg text-white hover:shadow-xl hover:from-blue-500 transition-all"
+        class="py-3 px-6 rounded-lg text-base font-medium bg-blue-500 border border-blue-600 shadow-md text-white hover:shadow-lg transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg>
-        Add New Plan
+        Add New Event
       </button>
     </div>
 
@@ -51,7 +51,7 @@
       <div
         v-for="plan in filteredPlans"
         :key="plan._id"
-        class="bg-white p-4 rounded-xl shadow-md border-l-4 hover:bg-gray-100 transition flex justify-between items-center"
+        class="bg-white p-4 rounded-lg shadow-md border-l-4 hover:bg-gray-100 transition flex justify-between items-center"
         :class="[getBorderClass(plan.color)]"
       >
         <div class="flex-1 cursor-pointer" @click="openActionModal(plan)">
@@ -82,7 +82,7 @@
 
     <div
       v-else
-      class="text-center py-10 bg-white rounded-xl shadow-lg border-2 border-dashed border-gray-300 mb-10"
+      class="text-center py-10 bg-white rounded-lg shadow-md border border-dashed border-gray-300 mb-10"
     >
       <p class="text-xl font-medium text-gray-600">This planner is empty. Start adding your tasks!</p>
     </div>
@@ -91,11 +91,10 @@
 
     <div
       v-if="isActionModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+      :class="currentActionView === 'file-viewer' ? 'fixed inset-0 z-50 bg-black/50' : 'fixed inset-0 z-50 flex items-center justify-center bg-black/50'"
     >
-      <div 
-        class="relative bg-white rounded-2xl shadow-2xl w-full p-8"
-        :class="{'max-w-2xl': currentActionView === 'file-viewer', 'max-w-md': currentActionView !== 'file-viewer'}"
+      <div
+        :class="currentActionView === 'file-viewer' ? 'relative bg-white shadow-2xl w-full h-full p-8 overflow-auto' : 'relative bg-white rounded-lg shadow-2xl w-full p-8 max-w-md'"
       >
         <button
           @click="closeActionModal"
@@ -116,7 +115,7 @@
             
             <button
               @click="switchToUpdateFiles"
-              class="w-full py-3 px-6 rounded-xl text-lg font-bold bg-indigo-500 text-white shadow-lg hover:bg-indigo-600 transition flex items-center justify-center space-x-2"
+              class="w-full py-3 px-6 rounded-lg text-lg font-bold bg-indigo-500 text-white shadow-md hover:bg-indigo-600 transition flex items-center justify-center space-x-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M5.5 13a.5.5 0 01.5-.5h2.5a.5.5 0 010 1H6a.5.5 0 01-.5-.5z" />
@@ -131,7 +130,7 @@
                   v-for="file in files"
                   :key="file.url"
                   @click="openFileViewer(file)"
-                  class="w-full text-left py-3 px-4 rounded-xl bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition flex items-center justify-between"
+                  class="w-full text-left py-3 px-4 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition flex items-center justify-between"
                 >
                   <span class="truncate">{{ file.name }}</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
@@ -145,17 +144,6 @@
             <div v-else class="text-center text-sm text-gray-500 mb-4">
                 No files attached to this plan.
             </div>
-
-
-            <button
-              @click="switchToTimer"
-              class="w-full py-4 px-6 rounded-xl text-lg font-bold bg-green-500 text-white shadow-lg hover:bg-green-600 transition flex items-center justify-center space-x-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Start Pomodoro Timer</span>
-            </button>
           </div>
         </div>
         
@@ -175,7 +163,7 @@
           <div v-if="localPlannerFiles.length" class="mb-4 max-h-40 overflow-y-auto border p-3 rounded-lg bg-gray-50">
             <h5 class="text-sm font-semibold text-gray-600 mb-2">Currently Attached:</h5>
             <ul class="space-y-1">
-              <li v-for="(file, index) in files" :key="file.url" class="flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded-md shadow-sm">
+              <li v-for="(file, index) in existingFiles" :key="file.url" class="flex items-center justify-between text-sm text-gray-700 bg-white p-2 rounded-md shadow-sm">
                 <span class="truncate">{{ file.name }}</span>
                 <button
                   @click="removePlannerFile(index)"
@@ -199,7 +187,7 @@
                 @change="handleFileUpload"
                 class="block w-full text-sm text-gray-50
                   file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
+                  file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
                   file:bg-blue-500 file:text-white
                   hover:file:bg-blue-600 transition duration-150"
@@ -221,7 +209,7 @@
                 @click="saveUpdatedFiles"
                 :disabled="!filesToUpload.length && !hasRemovedFiles"
                 :class="{'opacity-50 cursor-not-allowed': !filesToUpload.length && !hasRemovedFiles}"
-                class="py-2 px-4 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 shadow-lg transition"
+                class="py-2 px-4 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 shadow-md transition"
               >
                 Save Changes (Update Plan)
               </button>
@@ -241,16 +229,99 @@
 
           <h4 class="text-lg font-semibold text-gray-700 mb-4 text-center">Viewing: {{ selectedFile?.name }}</h4>
 
-          <div v-if="selectedFile && selectedFile.url" class="w-full h-96">
-            <embed
-              :src="selectedFile.url"
-              type="application/pdf"
-              class="w-full h-full border rounded-lg"
-              title="File Viewer"
-            />
-          </div>
-          <div v-else class="text-center text-gray-500">
-            Unable to display file.
+          <div class="flex flex-row space-x-6 h-[85vh]">
+            <div class="flex-1 flex flex-col">
+              <div 
+                v-if="selectedFile && selectedFile.url" 
+                class="w-full flex-1 border rounded-lg overflow-hidden"
+              >
+                <div v-if="fileType === 'image'" class="w-full h-full">
+                  <img :src="fullUrl" class="w-full h-full object-contain" alt="File preview">
+                </div>
+
+                <div v-else-if="fileType === 'pdf'" class="w-full h-full">
+                  <iframe 
+                    :src="fullUrl" 
+                    class="w-full h-full" 
+                    frameborder="0"
+                  ></iframe>
+                </div>
+
+                <div v-else class="flex items-center justify-center h-full bg-gray-100">
+                  <div class="text-center">
+                    <p class="text-gray-500 mb-4">Preview not available for this file type.</p>
+                    <a :href="fullUrl" :download="selectedFile.name" class="text-blue-600 hover:underline">
+                      Download File
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center text-gray-500 flex-1 flex items-center justify-center bg-gray-100 border rounded-lg">
+                Unable to display file.
+              </div>
+            </div>
+
+            <div class="w-80 pl-6 flex flex-col justify-center">
+              <!-- Pomodoro Timer Section -->
+              <div>
+                <p class="text-sm text-gray-500 mb-4 text-center">Focus timer for this task</p>
+
+                <div class="text-center mb-4">
+                  <div class="text-4xl font-mono font-bold text-gray-900">
+                    {{ formattedTime }}
+                  </div>
+                  <div v-if="isBreak" class="text-sm text-blue-600 font-semibold mt-2">
+                    Break Time
+                  </div>
+                  <div v-else-if="selectedDurationKey" class="text-sm text-green-600 font-semibold mt-2">
+                    Study Time
+                  </div>
+                </div>
+
+                <div class="flex justify-center gap-2 mb-4">
+            <button
+              @click="resetTimer('25m')"
+              class="px-3 py-1 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            >
+              25m
+            </button>
+            <button
+              @click="resetTimer('1h')"
+              class="px-3 py-1 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            >
+              1h
+            </button>
+            <button
+              @click="resetTimer('2h')"
+              class="px-3 py-1 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            >
+              2h
+            </button>
+                </div>
+
+                <div class="flex items-center justify-center gap-3">
+                  <button
+                    @click="startTimer"
+                    class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold shadow-md hover:bg-green-600 transition"
+                  >
+                    Start
+                  </button>
+                  <button
+                    @click="pauseTimer"
+                    class="px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold shadow-md hover:bg-yellow-600 transition"
+                  >
+                    Pause
+                  </button>
+                  <button
+                    @click="clearTimer"
+                    class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow-md hover:bg-red-600 transition"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -303,19 +374,19 @@
           <div class="flex items-center justify-center gap-3">
             <button
               @click="startTimer"
-              class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold shadow hover:bg-green-600 transition"
+              class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold shadow-md hover:bg-green-600 transition"
             >
               Start
             </button>
             <button
               @click="pauseTimer"
-              class="px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold shadow hover:bg-yellow-600 transition"
+              class="px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold shadow-md hover:bg-yellow-600 transition"
             >
               Pause
             </button>
             <button
               @click="clearTimer"
-              class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition"
+              class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow-md hover:bg-red-600 transition"
             >
               Reset
             </button>
@@ -352,6 +423,7 @@ const isActionModalOpen = ref(false);
 const selectedPlan = ref(null);
 const currentActionView = ref('selection'); // 'selection', 'timer', 'file-viewer', or 'file-update'
 const selectedFile = ref(null);
+const isViewerEnlarged = ref(false);
 
 // 🔑 NEW: File Update State
 const filesToUpload = ref([]);
@@ -359,8 +431,40 @@ const hasRemovedFiles = ref(false);
 const localPlannerFiles = ref([]);
 
 // Computed files for display
-const files = computed(() => {
+const existingFiles = computed(() => {
   return localPlannerFiles.value.map(url => ({ url, name: url.split('/').pop() }));
+});
+
+const files = computed(() => {
+  const existing = existingFiles.value.map(file => ({ ...file, staged: false }));
+  const staged = filesToUpload.value.map(file => ({ url: '', name: file.name, staged: true }));
+  return [...existing, ...staged];
+});
+
+// Computed for file viewer
+const fullUrl = computed(() => {
+  if (!selectedFile.value || !selectedFile.value.url) return '';
+  return 'http://localhost:3000' + selectedFile.value.url;
+});
+
+const fileType = computed(() => {
+  if (!selectedFile.value || !selectedFile.value.name) return '';
+  const ext = selectedFile.value.name.split('.').pop().toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) return 'image';
+  if (ext === 'pdf') return 'pdf';
+  return 'other';
+});
+
+const modalClass = computed(() => {
+  if (currentActionView.value === 'file-viewer') {
+    return isViewerEnlarged.value ? 'max-w-4xl' : 'max-w-2xl';
+  } else {
+    return 'max-w-md';
+  }
+});
+
+const viewerClass = computed(() => {
+  return ['w-full border rounded-lg mb-6 overflow-hidden', isViewerEnlarged.value ? 'h-[60vh]' : 'h-96'];
 });
 
 
@@ -492,9 +596,14 @@ const saveUpdatedFiles = async () => {
     try {
         await store.updateEventWithFiles(selectedPlan.value._id, formData);
 
+        // Update selectedPlan to the updated event from store
+        selectedPlan.value = store.events.find(e => e._id === selectedPlan.value._id);
+
         // SUCCESS CLEANUP (existing logic)
         filesToUpload.value = [];
         hasRemovedFiles.value = false;
+        // Update localPlannerFiles to reflect changes immediately for reactivity
+        localPlannerFiles.value = [...(selectedPlan.value.plannerFiles || [])];
         currentActionView.value = 'selection';
 
     } catch (error) {
@@ -512,6 +621,10 @@ const switchToTimer = () => {
 
 /* 🔑 NEW: Sets the file and switches to the viewer view */
 const openFileViewer = (file) => {
+    if (file.staged) {
+        alert("File not uploaded yet. Save changes first.");
+        return;
+    }
     clearTimer(false);
     selectedFile.value = file;
     currentActionView.value = 'file-viewer';

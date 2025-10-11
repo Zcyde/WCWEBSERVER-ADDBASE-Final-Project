@@ -2,30 +2,30 @@
   <div class="flex-1 p-3 sm:p-6 relative bg-white min-h-screen">
     <!-- Header -->
     <div
-      class="relative z-10 p-2 sm:p-4 mb-4 sm:mb-8 bg-gray-300 border-2 border-black shadow-md"
+      class="relative z-10 p-4 mb-6 bg-gray-100 border border-gray-300 shadow-md"
     >
-      <h1 class="text-lg sm:text-2xl font-bold text-center text-gray-900">Dashboard</h1>
+      <h1 class="text-xl font-bold text-center text-gray-900">Dashboard</h1>
     </div>
 
     <!-- Welcome / Planners Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
       <!-- User Info -->
       <div
-        class="bg-white p-3 sm:p-4 shadow-md flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 space-y-2 sm:space-y-0 col-span-1"
+        class="bg-white p-4 shadow-md border border-gray-200 flex flex-col items-center justify-center col-span-1"
       >
         <div
           class="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-gray-200"
         >
           <img :src="avatar" alt="User Avatar" class="w-full h-full object-cover" />
         </div>
-        <div class="text-center sm:text-left">
+        <div class="text-center">
           <h2 class="text-sm sm:text-xl text-gray-500 font-medium">Welcome Back,</h2>
           <h1 class="text-base sm:text-3xl font-bold text-gray-800">{{ firstName }} {{ lastName }}</h1>
         </div>
       </div>
 
       <!-- Planners Section -->
-      <div class="bg-white p-3 sm:p-4 shadow-md col-span-2">
+      <div class="bg-white p-4 shadow-md border border-gray-200 col-span-2">
         <h2 class="text-base sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-700 border-b pb-1 sm:pb-2">
           Planners
         </h2>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Active Tasks -->
-    <div class="bg-white p-3 sm:p-6 shadow-xl mb-6 sm:mb-8">
+    <div class="bg-white p-4 shadow-md border border-gray-200 mb-6">
       <h2 class="text-lg sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2">
         {{ activeTaskTitle }}
       </h2>
@@ -73,7 +73,7 @@
         <div
           v-for="plan in activeTasks"
           :key="plan.id"
-          class="bg-gray-50 p-2 sm:p-3 shadow-sm border-l-4 transition hover:shadow-md flex justify-between items-center"
+          class="bg-gray-50 p-4 shadow-sm border-l-4 transition hover:shadow-md flex justify-between items-center"
           :class="[plan.color.replace('bg-', 'border-')]"
         >
           <p class="text-sm sm:text-lg font-semibold text-gray-700 truncate mr-2 sm:mr-4">
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Weekly Overview -->
-    <div class="bg-white p-3 sm:p-4 shadow-xl">
+    <div class="bg-white p-4 shadow-md border border-gray-200">
       <h2 class="text-base sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800 border-b pb-1 sm:pb-2">
         Weekly Schedule Overview
       </h2>
@@ -119,7 +119,7 @@
         >
           <div
             class="p-2 text-center text-xs sm:text-sm"
-            :class="[day.isToday ? 'bg-indigo-500 text-white shadow-lg' : 'bg-gray-200 text-gray-700']"
+            :class="[day.isToday ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-200 text-gray-700']"
           >
             <span class="block">{{ day.dayOfWeek }}</span>
             <span class="opacity-80">{{ day.dayOfMonth }}</span>
@@ -127,12 +127,12 @@
 
           <div
             class="min-h-[3rem] sm:min-h-[5rem] p-2 border border-gray-100 flex flex-col justify-center items-center bg-white"
-            :class="[day.isToday ? 'bg-indigo-50' : 'bg-white']"
+            :class="[day.isToday ? 'bg-blue-50' : 'bg-white']"
           >
             <div v-if="day.tasks.length" class="text-center">
               <span
                 class="text-sm sm:text-2xl font-extrabold"
-                :class="[day.isToday ? 'text-indigo-700' : 'text-green-600']"
+                :class="[day.isToday ? 'text-blue-700' : 'text-green-600']"
               >
                 {{ day.tasks.length }}
               </span>

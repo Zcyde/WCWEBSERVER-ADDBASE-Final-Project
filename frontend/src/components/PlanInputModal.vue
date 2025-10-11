@@ -65,7 +65,7 @@
           <button
             type="submit"
             class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-          >Add to Schedule</button>
+          >Add to Planner</button>
         </div>
       </form>
     </div>
