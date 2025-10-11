@@ -82,7 +82,8 @@
               {{ day.dayOfMonth }}
             </div>
 
-            <div v-if="day.events && day.events.length" class="space-y-0.5">
+            <!-- ✅ Weekly: Scrollable Events -->
+            <div v-if="day.events && day.events.length" class="space-y-0.5 overflow-y-auto max-h-12 pr-1">
               <div
                 v-for="event in day.events"
                 :key="'week-event-' + event.id"
@@ -132,7 +133,8 @@
               {{ day.dayOfMonth }}
             </div>
 
-            <div v-if="day.events && day.events.length" class="space-y-0.5">
+            <!-- ✅ Monthly: Scrollable Events -->
+            <div v-if="day.events && day.events.length" class="space-y-0.5 overflow-y-auto max-h-12 pr-1">
               <div
                 v-for="event in day.events"
                 :key="event.id"
