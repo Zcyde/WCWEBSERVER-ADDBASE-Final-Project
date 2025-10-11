@@ -3,18 +3,8 @@
     <!-- HEADER -->
     <div class="flex justify-between items-center border-b pb-4 mb-6 relative z-10">
       <h1
-        class="py-2 px-6 rounded-full border-2 border-black font-sans text-xl md:text-2xl font-bold text-black bg-gradient-to-b from-gray-300 to-gray-400 shadow-lg"
-      >
-        LIBRARY
-      </h1>
-
-      <button
-        @click="loadFiles"
-        :disabled="isLoading"
-        class="bg-gray-200 px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-300 border border-gray-400 shadow-sm disabled:opacity-50"
-      >
-        {{ isLoading ? 'Loading...' : 'Refresh' }}
-      </button>
+        class="py-2 px-6 rounded-none border-2 border-black text-xl sm:text-2xl font-bold text-gray-800 bg-gradient-to-b from-gray-200 to-gray-300 shadow-md"
+      >Library</h1>
     </div>
 
     <!-- FILE GRID -->

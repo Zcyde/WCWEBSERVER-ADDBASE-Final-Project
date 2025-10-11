@@ -13,8 +13,7 @@
           class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
           active-class="bg-gray-100 font-semibold text-black shadow-md"
           exact-active-class="bg-gray-100 font-semibold text-black shadow-md"
-        >
-          <span class="text-xl">📊</span>
+        > 
           <span>Dashboard</span>
         </router-link>
 
@@ -23,7 +22,7 @@
           class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
           active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
-          <span class="text-xl">📝</span>
+          
           <span>Planner</span>
         </router-link>
 
@@ -32,7 +31,7 @@
           class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
           active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
-          <span class="text-xl">📅</span>
+          
           <span>Schedule</span>
         </router-link>
 
@@ -41,7 +40,7 @@
           class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200"
           active-class="bg-gray-100 font-semibold text-black shadow-md"
         >
-          <span class="text-xl">📁</span>
+          
           <span>Library</span>
         </router-link>
 
@@ -51,7 +50,7 @@
             class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-2"
             active-class="bg-gray-100 font-semibold text-black shadow-md"
           >
-            <span class="text-xl">👤</span>
+            
             <span>Account</span>
           </router-link>
 
@@ -59,14 +58,14 @@
             @click="logout"
             class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 mt-2 w-full text-left"
           >
-            <span class="text-xl">🚪</span>
+            
             <span>Logout</span>
           </button>
         </div>
       </nav>
     </aside>
-
-    <main class="flex-1 relative p-6 bg-white overflow-y-auto">
+<!--Mobile Viewport-->
+    <main class="flex-1 relative p-6 bg-white overflow-y-auto"> 
       <router-view />
     </main>
 
