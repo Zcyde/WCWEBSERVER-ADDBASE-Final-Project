@@ -1,16 +1,19 @@
 INSTALL DEPENDENCIES BEFORE RUNNING THE CODE
 
 cd backend; npm install express mongoose
+
 cd frontend; npm install vue vite
 
 
 RUNNING THE CODE
 
 open two terminal instances, then run the backend on the first one:
+
 cd backend; npm start
 
 
 then run the frontend on the second one:
+
 cd frontend; npm run dev
 
 
