@@ -1,12 +1,11 @@
 const express = require('express');
-const mongoose = require('mongoose'); // for ObjectId
+const mongoose = require('mongoose');
 const router = express.Router();
 const fs = require('fs');
 const File = require('../models/File');
 const authenticateToken = require('../middleware/auth');
 const { upload } = require('../config/multer');
 
-// POST /api/files - upload files to library
 router.post('/', authenticateToken, upload.array('files'), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -18,7 +17,7 @@ router.post('/', authenticateToken, upload.array('files'), async (req, res) => {
       filename: file.filename,
       path: `/uploads/${file.filename}`,
       size: file.size,
-      userId: new mongoose.Types.ObjectId(req.userId) // <-- use 'new'!
+      userId: new mongoose.Types.ObjectId(req.userId)
     }));
 
     const savedFiles = await File.insertMany(uploadedFiles);
@@ -31,7 +30,6 @@ router.post('/', authenticateToken, upload.array('files'), async (req, res) => {
   }
 });
 
-// GET /api/files - list all files for current user
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const files = await File.find({ userId: new mongoose.Types.ObjectId(req.userId) })
@@ -44,7 +42,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// DELETE /api/files/:id - delete a file
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -54,12 +51,10 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    // Remove file from disk
     if (fs.existsSync(`.${file.path}`)) {
       fs.unlinkSync(`.${file.path}`);
     }
 
-    // Remove from DB
     await File.deleteOne({ _id: file._id });
     console.log(`File deleted: ${file._id}`);
     res.json({ message: 'File deleted successfully' });

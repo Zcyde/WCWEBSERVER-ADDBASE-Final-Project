@@ -106,18 +106,14 @@ const uploadFiles = async () => {
   if (!uploadingFiles.value.length || isProcessing.value) return;
   isProcessing.value = true;
 
-  // 1. Create a FormData object.
   const formData = new FormData();
 
-  // 2. Append new files to the FormData object under the key 'files'.
   uploadingFiles.value.forEach((file) => {
       formData.append(`files`, file);
   });
 
-  // 3. Convert the reactive plan object to a clean, non-reactive JavaScript object.
   const planData = toRaw(props.plan);
 
-  // 4. Construct the final update object for the backend JSON payload.
   const updateObject = {
       // Spread the clean object to include all event fields (title, date, color, etc.)
       ...planData,
@@ -125,15 +121,11 @@ const uploadFiles = async () => {
       plannerFiles: (planData.plannerFiles || []).map(f => f.url),
   };
 
-  // Clean up temporary/Mongoose properties before sending
-  // These properties should come from the URL/DB, not the body data.
   delete updateObject.id;
   delete updateObject._id;
 
-  // 5. Append the FULL event object as a JSON string under the key 'data'.
   formData.append('data', JSON.stringify(updateObject));
 
-  // 6. Call the store function with the Plan ID and the FormData object.
   try {
       await store.updateEventWithFiles(props.plan._id, formData);
 

@@ -5,7 +5,6 @@ const authenticateToken = require('../middleware/auth');
 const { uploadAvatar } = require('../config/multer');
 const bcrypt = require('bcrypt');
 
-// User routes
 router.get('/', authenticateToken, async (req, res) => {
   try {
     console.log(`GET /api/user - Fetching user data for ${req.userId}`);

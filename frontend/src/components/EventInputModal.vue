@@ -93,7 +93,6 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "event-added", "event-updated", "event-deleted"]);
 
-// Helper to get today's date in YYYY-MM-DD format
 const getTodayDateString = () => {
   const defaultDate = calendarState.viewDate || new Date();
   const dateObj = defaultDate instanceof Date ? defaultDate : new Date();
@@ -112,7 +111,6 @@ const newEvent = reactive({
 
 const isEditing = computed(() => !!props.event);
 
-// Resets form state when the modal opens
 watch(
   () => props.isVisible,
   () => {
@@ -134,7 +132,6 @@ watch(
 const submitEvent = async () => {
   if (!newEvent.title || !newEvent.date) return;
 
-  // Construct the data object without folderId for standalone events
   const eventData = {
     title: newEvent.title,
     date: newEvent.date,

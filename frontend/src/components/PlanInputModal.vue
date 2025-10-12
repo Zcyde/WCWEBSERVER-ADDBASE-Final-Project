@@ -91,10 +91,8 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-// Helper to get today's date in YYYY-MM-DD format
 const getTodayDateString = () => {
   const defaultDate = calendarState.viewDate || new Date();
-  // Ensure the object used for date parts is a valid Date object if calendarState.viewDate is null
   const dateObj = defaultDate instanceof Date ? defaultDate : new Date();
 
   return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(
@@ -109,7 +107,6 @@ const newPlan = reactive({
   color: props.folder.color,
 });
 
-// Resets form state when the modal opens or the folder changes
 watch(
   [() => props.isVisible, () => props.folder.color],
   () => {
@@ -125,7 +122,6 @@ watch(
 const submitPlan = async () => {
   if (!newPlan.title || !newPlan.date) return;
 
-  // 1. Construct the data object *without* a client-side ID. The backend will assign it.
   const planData = {
     title: newPlan.title,
     date: newPlan.date,
@@ -134,14 +130,9 @@ const submitPlan = async () => {
     // REMOVED: id: `e-${Date.now()}`
   };
 
-  // 2. Add event to the global store and WAIT for the API call to complete.
-  // The store receives the complete object (including the new backend ID)
-  // and pushes it into the reactive array.
   await store.addEvent(planData);
 
-  // 3. Emit the close event to the parent.
   emit("close");
-  // 4. Emit event to notify parent to reload events
   emit("event-added");
 };
 </script>

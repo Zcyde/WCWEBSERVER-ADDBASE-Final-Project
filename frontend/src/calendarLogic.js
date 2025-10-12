@@ -1,11 +1,9 @@
-// src/calendarLogic.js
 import { reactive } from "vue";
-import { store } from "./eventStore"; // Shared event store
+import { store } from "./eventStore"; 
 
-// --- Global Calendar State ---
 export const calendarState = reactive({
-  viewDate: new Date(), // Used for monthly view
-  weekStartDate: getStartOfWeek(new Date()) // Used for weekly view
+  viewDate: new Date(), 
+  weekStartDate: getStartOfWeek(new Date()) 
 });
 
 const monthNames = [
@@ -13,13 +11,6 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-// ------------------------------------------
-// 🔸 UTILITIES
-// ------------------------------------------
-
-/**
- * Returns start of the week (Sunday) for a given date.
- */
 function getStartOfWeek(date) {
   const d = new Date(date);
   const day = d.getDay();
@@ -28,19 +19,12 @@ function getStartOfWeek(date) {
   return d;
 }
 
-/**
- * Format date as YYYY-MM-DD
- */
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
-
-// ------------------------------------------
-// 🔸 MONTHLY LOGIC
-// ------------------------------------------
 
 export function getCurrentMonthYearDisplay() {
   const year = calendarState.viewDate.getFullYear();
@@ -78,7 +62,6 @@ export function generateCalendarDays() {
 
   const days = [];
 
-  // Preceding days (from previous month)
   const prevMonthLastDay = new Date(year, month, 0).getDate();
   for (let i = startDayOfWeek - 1; i >= 0; i--) {
     const date = new Date(year, month - 1, prevMonthLastDay - i);
@@ -90,7 +73,6 @@ export function generateCalendarDays() {
     });
   }
 
-  // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
     days.push({
@@ -101,7 +83,6 @@ export function generateCalendarDays() {
     });
   }
 
-  // Fill remaining cells with next month's days
   const totalCells = 42;
   const remainingCells = totalCells - days.length;
   for (let i = 1; i <= remainingCells; i++) {
@@ -116,10 +97,6 @@ export function generateCalendarDays() {
 
   return days;
 }
-
-// ------------------------------------------
-// 🔸 WEEKLY LOGIC
-// ------------------------------------------
 
 export function generateWeeklyDays() {
   const start = calendarState.weekStartDate;

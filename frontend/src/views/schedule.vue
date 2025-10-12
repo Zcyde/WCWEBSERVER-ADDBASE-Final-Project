@@ -80,7 +80,7 @@
               {{ day.dayOfMonth }}
             </div>
 
-            <!-- ✅ Weekly: Scrollable Events -->
+            <!-- Weekly: Scrollable Events -->
             <div
               v-if="day.events && day.events.length"
               class="space-y-0.5 overflow-y-auto max-h-30 pr-1"
@@ -135,7 +135,7 @@
               {{ day.dayOfMonth }}
             </div>
 
-            <!-- ✅ Monthly: Scrollable Events -->
+            <!-- Monthly: Scrollable Events -->
             <div
               v-if="day.events && day.events.length"
               class="space-y-0.5 overflow-y-auto max-h-12 pr-1"
@@ -194,7 +194,7 @@ const {
 const showEventModal = ref(false);
 const editingEvent = ref(null);
 
-// ✅ Click event handler for both weekly and monthly view
+// Click event handler for both weekly and monthly view
 const handleEventClick = (event) => {
   console.log("Clicked event:", event);
   editingEvent.value = event;

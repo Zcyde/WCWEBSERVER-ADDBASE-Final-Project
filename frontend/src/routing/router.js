@@ -11,8 +11,6 @@ import SignIn from '../views/signIn.vue';
 import Library from '../views/library.vue';
 
 const routes = [
-  // This is the parent route for the main application layout
-  // AuthLayout routing
   {
     path: '/login',
     name: 'Login',
@@ -24,8 +22,6 @@ const routes = [
     component: SignIn
   },
 
-
-  // MainLayout routing WITH AUTHENTICATION
   {
     path: '/',
     component: MainLayout,
@@ -44,26 +40,20 @@ const router = createRouter({
   routes,
 });
 
-// Authentication Guard (meta field)
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('authToken');
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isAuthPage = ['Login', 'Sign-In'].includes(to.name);
 
-  // 1. If the route requires auth AND the user is NOT authenticated,
-  // AND the destination is NOT already the Login page, redirect to Login.
   if (requiresAuth && !isAuthenticated && to.name !== 'Login') {
-    return next({ name: 'Login' }); // Use 'return' to halt execution and resolve the guard
+    return next({ name: 'Login' }); 
   } 
-  
-  // 2. If the user IS authenticated AND trying to go to a public auth page (Login/Sign-In),
-  // redirect them away to the Dashboard.
+
   else if (isAuthPage && isAuthenticated) {
-    return next({ name: 'Dashboard' }); // Use 'return' here as well
+    return next({ name: 'Dashboard' }); 
   } 
   
-  // 3. For all other cases (e.g., authenticated to protected, or unauthenticated to Login), proceed.
   else {
     next();
   }

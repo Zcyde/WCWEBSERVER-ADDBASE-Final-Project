@@ -37,7 +37,7 @@
               <!-- Error message -->
               <p v-if="errorMessage" class="text-red-500 text-sm mb-2">{{ errorMessage }}</p>
 
-              <!-- ✅ Links side by side -->
+              <!-- Links side by side -->
               <div class="w-full text-xs mb-4 flex justify-between">
                 <span @click="showForgotModal = true" class="text-blue-600 font-semibold hover:underline cursor-pointer">
                   Forgot Password?

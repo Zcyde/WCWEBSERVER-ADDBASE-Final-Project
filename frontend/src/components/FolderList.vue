@@ -54,6 +54,5 @@ defineProps({
   },
 });
 
-// 🔑 UPDATED: Define the new emitted event
 defineEmits(["select-folder", "delete-planner"]);
 </script>

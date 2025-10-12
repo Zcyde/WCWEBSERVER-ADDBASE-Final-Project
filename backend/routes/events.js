@@ -7,7 +7,6 @@ const { upload } = require('../config/multer');
 const fs = require('fs');
 const mongoose = require('mongoose');
 
-// GET all events
 router.get('/', authenticateToken, async (req, res) => {
   try {
     console.log(`GET /api/events - Fetching events for user ${req.userId}`);
@@ -30,7 +29,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// POST new event
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const eventData = req.body;
@@ -50,7 +48,6 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT update event and handle new files
 router.put('/:id', authenticateToken, upload.array('files'), async (req, res) => {
   const id = req.params.id;
   const newFiles = req.files || [];
@@ -66,21 +63,17 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
   try {
     console.log(`PUT /api/events/${id} - Updating event (new files: ${newFiles.length}) for user ${req.userId}`);
 
-    // Prepare new file URLs for planner
     const newFileUrls = newFiles.map(file => `/uploads/${file.filename}`);
 
-    // Combine retained and new files
     let retainedFiles = Array.isArray(eventData.plannerFiles) 
       ? eventData.plannerFiles.filter(f => typeof f === 'string' && f.trim() !== '')
       : [];
     const finalPlannerFiles = [...retainedFiles, ...newFileUrls];
 
-    // Construct update object
     const updateObject = { ...eventData, plannerFiles: finalPlannerFiles };
     delete updateObject.id;
     delete updateObject._id;
 
-    // Update the event
     const updatedEvent = await Event.findOneAndUpdate(
       { _id: id, userId: req.userId },
       updateObject,
@@ -92,14 +85,13 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // ✅ Save new uploaded files into File collection
     if (newFiles.length > 0) {
       const fileDocs = newFiles.map(file => ({
         name: file.originalname,
         filename: file.filename,
         path: `/uploads/${file.filename}`,
         size: file.size,
-        userId: new mongoose.Types.ObjectId(req.userId) // cast to ObjectId
+        userId: new mongoose.Types.ObjectId(req.userId)
       }));
 
       await File.insertMany(fileDocs);
@@ -116,7 +108,6 @@ router.put('/:id', authenticateToken, upload.array('files'), async (req, res) =>
   }
 });
 
-// DELETE an event
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;

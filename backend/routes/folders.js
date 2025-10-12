@@ -1,12 +1,9 @@
-// folders.js
-
 const express = require('express');
 const router = express.Router();
 const Folder = require('../models/Folder');
-const Event = require('../models/Event'); // 🔑 CRITICAL: Import the Event model
+const Event = require('../models/Event');
 const authenticateToken = require('../middleware/auth');
 
-// Folders API
 router.get('/', authenticateToken, async (req, res) => {
   try {
     console.log(`GET /api/folders - Fetching folders for user ${req.userId}`);
@@ -34,23 +31,17 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// ----------------------------------------------------
-// 🔑 NEW: DELETE Folder and ALL its Events (Manual Cascade)
-// ----------------------------------------------------
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const folderId = req.params.id;
         console.log(`DELETE /api/folders/${folderId} - Deleting folder and events for user ${req.userId}`);
         
-        // 1. CRITICAL: Delete ALL associated Events FIRST. 
-        // We filter by both folderId and userId for maximum safety.
         const eventResult = await Event.deleteMany({ 
             folderId: folderId, 
             userId: req.userId 
         });
         console.log(`[Manual Cascade] Deleted ${eventResult.deletedCount} associated events.`);
         
-        // 2. Delete the Folder document.
         const folderResult = await Folder.findOneAndDelete({ 
             _id: folderId, 
             userId: req.userId 
@@ -60,9 +51,8 @@ router.delete('/:id', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Planner not found' });
         }
 
-        // Success!
         console.log(`Folder deleted: ${folderId}`);
-        return res.status(204).send(); // 204 No Content is standard for successful DELETE
+        return res.status(204).send(); 
 
     } catch (err) {
         console.error(`FATAL SERVER ERROR during delete of folder ${req.params.id}:`, err);

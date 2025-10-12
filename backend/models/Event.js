@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Helper to format date as YYYY-MM-DD
 function formatDate(date) {
   return date.toISOString().split('T')[0];
 }
@@ -15,7 +14,6 @@ const eventSchema = new mongoose.Schema({
   plannerFiles: [String]
 });
 
-// Format date when converting to JSON (e.g., API response)
 eventSchema.set('toJSON', {
   transform: (doc, ret) => {
     if (ret.date) {
@@ -25,7 +23,6 @@ eventSchema.set('toJSON', {
   }
 });
 
-// Format date when converting to plain object (e.g., after save)
 eventSchema.set('toObject', {
   transform: (doc, ret) => {
     if (ret.date) {

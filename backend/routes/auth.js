@@ -13,23 +13,19 @@ router.post('/signup', async (req, res) => {
     const { firstName, lastName, email, username, password, contact, gender, address, birthDate } = req.body;
     console.log(`POST /api/signup - Attempting to sign up user: ${username} (${email})`);
 
-    // Validate required fields
     if (!firstName || !lastName || !email || !username || !password) {
       console.log('Signup failed: Missing required fields');
       return res.status(400).json({ error: 'All required fields must be provided' });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       console.log(`Signup failed: User already exists - ${username} or ${email}`);
       return res.status(400).json({ error: 'User with this email or username already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const newUser = new User({
       firstName,
       lastName,
@@ -45,10 +41,8 @@ router.post('/signup', async (req, res) => {
     await newUser.save();
     console.log(`User signed up successfully: ${newUser.username} (ID: ${newUser._id})`);
 
-    // Generate JWT
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: '7d' });
 
-    // Return user and token
     const { password: _, ...userWithoutPassword } = newUser.toObject();
     res.status(201).json({ user: userWithoutPassword, token });
   } catch (err) {
@@ -67,14 +61,12 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    // Find user by username or email
     const user = await User.findOne({ $or: [{ username }, { email: username }] });
     if (!user) {
       console.log(`Login failed: User not found - ${username}`);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       console.log(`Login failed: Invalid password for user - ${username}`);
@@ -83,10 +75,8 @@ router.post('/login', async (req, res) => {
 
     console.log(`User logged in successfully: ${user.username} (ID: ${user._id})`);
 
-    // Generate JWT
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
-    // Return user and token
     const { password: _, ...userWithoutPassword } = user.toObject();
     res.json({ user: userWithoutPassword, token });
   } catch (err) {

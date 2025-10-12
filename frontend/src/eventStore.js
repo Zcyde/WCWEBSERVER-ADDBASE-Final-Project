@@ -6,10 +6,8 @@ export const store = reactive({
     folders: [],
 
     async loadData() {
-        // CLEANUP: Do not proceed with API calls if no token is present.
         if (!localStorage.getItem('authToken')) {
             console.warn("Skipping loadData: User is not authenticated.");
-            // Fallback to local storage (or just return empty arrays)
             const savedFolders = localStorage.getItem('folders');
             const savedEvents = localStorage.getItem('events');
             this.folders = savedFolders ? JSON.parse(savedFolders) : [];
@@ -18,7 +16,6 @@ export const store = reactive({
         }
 
         try {
-            // --- Backend API version ---
             const [eventsRes, foldersRes] = await Promise.all([
                 api.get('/events'),
                 api.get('/folders')
@@ -28,11 +25,7 @@ export const store = reactive({
 
             console.log("Store loaded from backend. Folders:", this.folders.length, "Events:", this.events.length);
         } catch (error) {
-            // Note: If this 401, the API Interceptor handles the redirect.
-            // We only need to handle non-auth related failures here.
             console.error("Failed to load data from backend:", error);
-            
-            // Fallback to localStorage if backend fails (e.g., 500 server error)
             const savedFolders = localStorage.getItem('folders');
             const savedEvents = localStorage.getItem('events');
             this.folders = savedFolders ? JSON.parse(savedFolders) : [];
@@ -54,11 +47,8 @@ export const store = reactive({
         }
     },
 
-    // ... rest of your store methods (addEvent, addFolder) ...
-    // ... (They are fine as they are, using the try/catch blocks) ...
     async addEvent(eventData) {
         try {
-            // --- Backend API version ---
             const response = await api.post('/events', eventData);
             const newEvent = response.data;
 
@@ -68,7 +58,6 @@ export const store = reactive({
             console.log("Added event to backend. Events count:", this.events.length);
         } catch (error) {
             console.error('Failed to add event to backend:', error);
-            // Fallback to localStorage
             const newEvent = {
                 ...eventData,
                 id: Date.now()
@@ -81,20 +70,14 @@ export const store = reactive({
 
     async updateEventWithFiles(planId, formData) {
         try {
-            // --- Backend API version ---
-            // IMPORTANT: We use a special configuration here.
-            // We set 'Content-Type' to undefined so Axios and the browser can automatically set
-            // the boundary necessary for multipart/form-data uploads.
             const response = await api.put(`/events/${planId}`, formData, {
                 headers: {
-                    // Axios will automatically set the correct 'multipart/form-data' boundary
                     'Content-Type': undefined,
                 },
             });
 
             const savedPlan = response.data;
-            // Update the local state with the data returned from the backend
-            const index = this.events.findIndex(e => e._id === savedPlan._id); // Use _id for MongoDB
+            const index = this.events.findIndex(e => e._id === savedPlan._id);
             if (index !== -1) {
                 this.events[index] = savedPlan;
             }
@@ -110,14 +93,12 @@ export const store = reactive({
         if (!name) return;
 
         try {
-            // --- Backend API version ---
             const response = await api.post('/folders', { name, color });
             this.folders.push(response.data);
 
             console.log("Added folder to backend:", response.data);
         } catch (error) {
             console.error('Failed to add folder to backend:', error);
-            // Fallback to localStorage
             const newFolder = {
                 id: Date.now(),
                 name,
@@ -138,7 +119,6 @@ export const store = reactive({
     async deleteFolder(folderId) {
         if (!localStorage.getItem('authToken')) {
             console.warn("Skipping deleteFolder: User is not authenticated.");
-            // Fallback to local storage logic for unauthenticated users
             this.folders = this.folders.filter(f => f._id !== folderId);
             this.events = this.events.filter(e => e.folderId !== folderId);
             localStorage.setItem('folders', JSON.stringify(this.folders));
@@ -149,13 +129,10 @@ export const store = reactive({
 
 
         try {
-            // 1. Send delete request for the folder. (Backend must handle cascading event delete)
             await api.delete(`/folders/${folderId}`);
 
-            // 2. Update local state: remove the folder
             this.folders = this.folders.filter(f => f._id !== folderId);
 
-            // 3. Update local state: remove all associated events
             this.events = this.events.filter(e => e.folderId !== folderId);
 
             console.log(`Successfully deleted folder ${folderId} and its plans from backend.`);
@@ -167,7 +144,6 @@ export const store = reactive({
 
     async updateEvent(eventId, eventData) {
         try {
-            // --- Case 1: Authenticated (update on backend) ---
             if (localStorage.getItem("authToken")) {
                 await api.put(`/events/${eventId}`, eventData);
                 console.log(`Updated event ${eventId} on backend`);
@@ -175,13 +151,11 @@ export const store = reactive({
                 console.warn("User not authenticated — updating event locally only.");
             }
 
-            // --- Case 2: Update local state ---
             const index = this.events.findIndex(e => String(e._id ?? e.id) === String(eventId));
             if (index !== -1) {
                 this.events[index] = { ...this.events[index], ...eventData };
             }
 
-            // --- Case 3: Update localStorage ---
             localStorage.setItem("events", JSON.stringify(this.events));
 
             console.log(`Updated event ${eventId} and updated localStorage`);
@@ -192,7 +166,6 @@ export const store = reactive({
     },
 
     async deleteEvent(eventId) {
-        // Optimistic update: Update local state immediately
         const originalEvents = [...this.events];
         this.events = this.events.filter(
             (e) => String(e._id ?? e.id) !== String(eventId)
@@ -200,7 +173,6 @@ export const store = reactive({
         localStorage.setItem("events", JSON.stringify(this.events));
 
         try {
-            // --- Case 1: Authenticated (delete from backend) ---
             if (localStorage.getItem("authToken")) {
                 await api.delete(`/events/${eventId}`);
                 console.log(`Deleted event ${eventId} from backend`);
@@ -211,7 +183,6 @@ export const store = reactive({
             console.log(`Deleted event ${eventId} and updated localStorage`);
         } catch (error) {
             console.error("Failed to delete event:", error);
-            // Revert on failure
             this.events = originalEvents;
             localStorage.setItem("events", JSON.stringify(this.events));
         }
